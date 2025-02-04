@@ -1,9 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using RecruitmentManagement.Models;
+using RecruitmentManagement.Repositories;
+using RecruitmentManagement.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<UserTypeContext>(opt => 
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddScoped<IUserTypeRepository,UserTypeService>();
+
 
 var app = builder.Build();
 
