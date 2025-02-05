@@ -29,10 +29,10 @@ public class UserTypeService : IUserTypeRepository
         return result.Entity;
     }
 
-    public async Task<UserType> UpdateUserType(UserType userType)
+    public async Task<UserType> UpdateUserType(long id,UserType userType)
     {
        var result = await userTypeContext.UserTypes
-                    .FirstOrDefaultAsync(ut=>ut.Id == userType.Id);
+                    .FirstOrDefaultAsync(ut=>ut.Id == id);
         if(result != null){
             result.TypeOfUser = userType.TypeOfUser;
             await userTypeContext.SaveChangesAsync();
@@ -45,19 +45,24 @@ public class UserTypeService : IUserTypeRepository
         
     }
 
-    public async void DeleteUserType(long id)
+    public async Task<UserType> DeleteUserType(long id)
     {
         var result = await userTypeContext.UserTypes
                     .FirstOrDefaultAsync(ut=>ut.Id == id);
-        if(result != null){
-            
+        if(result != null){  
             userTypeContext.Remove(result);
             await userTypeContext.SaveChangesAsync();
-
-        //ToDo: Send Message: User Deleted Sucessfully
+            return result;
         }
 
-        //ToDo: Send Message: No user found
+        return null;
 
+    }
+
+    public async Task<UserType> GetUserTypeByTypeOfUser(string type)
+    {
+        return await userTypeContext.UserTypes
+                    .FirstOrDefaultAsync(ut=>ut.TypeOfUser.Equals(type));
+        
     }
 }

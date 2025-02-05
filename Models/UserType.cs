@@ -9,6 +9,7 @@ public class UserType{
     public long Id{get; set;}
 
     [Required]
+    [StringLength(100,MinimumLength = 2)]
     public String TypeOfUser{get; set;}
 
 }

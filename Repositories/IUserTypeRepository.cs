@@ -10,7 +10,8 @@ public interface IUserTypeRepository
 
     Task<UserType> AddUserType(UserType userType);
 
-    Task<UserType> UpdateUserType(UserType userType);
+    Task<UserType> UpdateUserType(long id,UserType userType);
 
-    void DeleteUserType(long id);
+    Task<UserType> DeleteUserType(long id);
+    Task<UserType> GetUserTypeByTypeOfUser(string type);
 }
