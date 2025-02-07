@@ -10,9 +10,9 @@ using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.Migrations
 {
-    [DbContext(typeof(UserTypeContext))]
-    [Migration("20250205094233_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(ApplicationContext))]
+    [Migration("20250207054421_UpdatedModelsWithCreatedAt")]
+    partial class UpdatedModelsWithCreatedAt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,42 @@ namespace RecruitmentManagement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("RecruitmentManagement.Models.DocumentType", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("documentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("DocumentTypes");
+                });
+
+            modelBuilder.Entity("RecruitmentManagement.Models.InterviewType", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("interviewType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("InterviewTypes");
+                });
 
             modelBuilder.Entity("RecruitmentManagement.Models.UserType", b =>
                 {

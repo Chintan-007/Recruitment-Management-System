@@ -5,22 +5,22 @@
 namespace RecruitmentManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InterviewTypeAdded : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "UserTypes",
+                name: "InterviewTypes",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeOfUser = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    interviewType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTypes", x => x.Id);
+                    table.PrimaryKey("PK_InterviewTypes", x => x.id);
                 });
         }
 
@@ -28,7 +28,7 @@ namespace RecruitmentManagement.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserTypes");
+                name: "InterviewTypes");
         }
     }
 }

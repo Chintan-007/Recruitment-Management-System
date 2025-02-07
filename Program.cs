@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 using RecruitmentManagement.Services;
@@ -13,11 +12,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IUserTypeRepository,UserTypeService>();
+builder.Services.AddScoped<IDocumentTypeRepository,DocumentTypeService>();
+builder.Services.AddScoped<IInterviewTypeRepository,InterviewTypeService>();
 
 //Database Connection
 var provider = builder.Services.BuildServiceProvider();
 var config = provider.GetRequiredService<IConfiguration>();
-builder.Services.AddDbContext<UserTypeContext>(opt => 
+
+builder.Services.AddDbContext<ApplicationContext>(opt => 
     opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();

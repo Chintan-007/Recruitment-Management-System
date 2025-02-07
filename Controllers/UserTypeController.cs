@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
-using RecruitmentManagement.Services;
 
 namespace RecruitmentManagement.Controllers;
 
@@ -9,16 +9,37 @@ namespace RecruitmentManagement.Controllers;
 [ApiController]
 public class UserTypeController : ControllerBase
 {
-    private readonly IUserTypeRepository userTypeService;
+    private readonly IUserTypeRepository userTypeRepository;
 
-    public UserTypeController(IUserTypeRepository userTypeService){
-        this.userTypeService = userTypeService;
+    public UserTypeController(IUserTypeRepository userTypeRepository){
+        this.userTypeRepository = userTypeRepository;
+    }
+
+[HttpPost]
+    public async Task<ActionResult<UserType>> CreateUserType(UserType userType){
+        try{
+            if(userType == null){
+                return BadRequest();
+            }
+
+            // Check if usertype already exists or not
+            var result = await userTypeRepository.GetUserTypeByTypeOfUser(userType.TypeOfUser);
+            if(result == null){
+                var createdUserType = await userTypeRepository.AddUserType(userType);
+                return CreatedAtAction(nameof(GetUserTypeById),new {id = createdUserType.Id},createdUserType);
+            }else{
+                return StatusCode(StatusCodes.Status208AlreadyReported, $"The user type: {userType.TypeOfUser} already exists");
+            }
+
+        }catch(Exception){
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpGet]
     public async Task<ActionResult> GetUserTypes(){
         try{
-            return Ok(await userTypeService.GetUserTypes());
+            return Ok(await userTypeRepository.GetUserTypes());
         }   
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -29,7 +50,7 @@ public class UserTypeController : ControllerBase
     [HttpGet("{id:long}")]
     public async Task<ActionResult<UserType>> GetUserTypeById(long id){
         try{
-            var result = await userTypeService.GetUserTypeById(id);
+            var result = await userTypeRepository.GetUserTypeById(id);
             if(result == null) return NotFound();
             return result;
         }
@@ -39,37 +60,17 @@ public class UserTypeController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserType>> CreateUserType(UserType userType){
-        try{
-            if(userType == null){
-                return BadRequest();
-            }
-
-            // Check if usertype already exists or not
-            var result = await userTypeService.GetUserTypeByTypeOfUser(userType.TypeOfUser);
-            if(result == null){
-                var createdUserType = await userTypeService.AddUserType(userType);
-                return CreatedAtAction(nameof(GetUserTypeById),
-                                    new {id = createdUserType.Id},createdUserType);
-            }else{
-                return StatusCode(StatusCodes.Status208AlreadyReported, $"The user type: {userType.TypeOfUser} already exists");
-            }
-
-        }catch(Exception){
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+    
 
     [HttpPut("{id:long}")]
     public async Task<ActionResult<UserType>> UpdateUserType(long id, UserType userType){
 
         try{
-            var userTypeToUpdate = await userTypeService.GetUserTypeById(id);
+            var userTypeToUpdate = await userTypeRepository.GetUserTypeById(id);
             if(userTypeToUpdate == null){
                 return NotFound($"UserType with Id = {id} not found");
             }
-            return await userTypeService.UpdateUserType(id,userType);
+            return await userTypeRepository.UpdateUserType(id,userType);
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,
@@ -81,11 +82,11 @@ public class UserTypeController : ControllerBase
     [HttpDelete("{id:long}")]
     public async Task<ActionResult<UserType>> DeleteUserType(long id){
         try{
-            var usertypeToDelete = await userTypeService.GetUserTypeById(id);
+            var usertypeToDelete = await userTypeRepository.GetUserTypeById(id);
             if(usertypeToDelete == null){
                 return NotFound($"Usertype with id: {id} not found");
             }
-            return await userTypeService.DeleteUserType(id);
+            return await userTypeRepository.DeleteUserType(id);
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,

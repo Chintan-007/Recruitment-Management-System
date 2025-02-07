@@ -7,12 +7,24 @@ namespace RecruitmentManagement.Services;
 
 public class UserTypeService : IUserTypeRepository
 {
-    private readonly UserTypeContext userTypeContext;
+    private readonly ApplicationContext userTypeContext;
 
-    public UserTypeService(UserTypeContext context){
+
+    public UserTypeService(ApplicationContext context){
         userTypeContext = context;
     }
 
+
+    //Create
+    public async Task<UserType> AddUserType(UserType userType)
+    {
+        var result =  await userTypeContext.UserTypes.AddAsync(userType);
+        await userTypeContext.SaveChangesAsync();
+        return result.Entity;
+    }
+
+
+    //Read
     public async Task<IEnumerable<UserType>> GetUserTypes(){
         return await userTypeContext.UserTypes.ToListAsync();
     }
@@ -22,13 +34,14 @@ public class UserTypeService : IUserTypeRepository
         return await userTypeContext.UserTypes.FindAsync(id);
     }
 
-    public async Task<UserType> AddUserType(UserType userType)
+    public async Task<UserType> GetUserTypeByTypeOfUser(string type)
     {
-        var result =  await userTypeContext.UserTypes.AddAsync(userType);
-        await userTypeContext.SaveChangesAsync();
-        return result.Entity;
+        return await userTypeContext.UserTypes
+                    .FirstOrDefaultAsync(ut=>ut.TypeOfUser.Equals(type));
+        
     }
 
+    //Update
     public async Task<UserType> UpdateUserType(long id,UserType userType)
     {
        var result = await userTypeContext.UserTypes
@@ -40,7 +53,6 @@ public class UserTypeService : IUserTypeRepository
             return result;
         }
 
-        //ToDo: Send Message: No user found
         return null;
         
     }
@@ -59,10 +71,4 @@ public class UserTypeService : IUserTypeRepository
 
     }
 
-    public async Task<UserType> GetUserTypeByTypeOfUser(string type)
-    {
-        return await userTypeContext.UserTypes
-                    .FirstOrDefaultAsync(ut=>ut.TypeOfUser.Equals(type));
-        
-    }
 }
