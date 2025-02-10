@@ -54,7 +54,7 @@ public class InterviewTypeController : ControllerBase
         try{
             var result = await interviewTypeRepository.GetInterviewTypeById(id);
             if(result == null){
-                return NotFound($"Round handler type with Id: {id} not found !");
+                return NotFound($"Interview type with Id: {id} not found !");
             }
             return result;
         }
@@ -71,12 +71,12 @@ public class InterviewTypeController : ControllerBase
         try{
             var result = await interviewTypeRepository.UpdateInterviewTypeById(id,interviewType);
             if(result == null){
-                return NotFound($"Round handler type with Id: {id} not found !");
+                return NotFound($"Interview type with Id: {id} not found !");
             }
             return result;
         }
         catch(Exception){
-            return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't update the round handler type...!");
+            return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't update the Interview type...!");
         }
     }
 
@@ -87,12 +87,12 @@ public class InterviewTypeController : ControllerBase
         try{
             var result = await interviewTypeRepository.DeleteInterviewTypeById(id);
             if(result == null){
-                return NotFound($"Round handler type with Id: {id} not found !");
+                return NotFound($"Interview type with Id: {id} not found !");
             }
             return result;
         }
         catch(Exception){
-            return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't delete the round handler type...!");
+            return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't delete the Interview type...!");
         }
     }
     

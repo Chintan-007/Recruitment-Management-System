@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 using RecruitmentManagement.Services;
@@ -11,19 +14,60 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddScoped<IUserTypeRepository,UserTypeService>();
+//Preventing object cycles(loops in the results)
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
+
+// builder.Services.AddScoped<IUserTypeRepository,UserTypeService>();
 builder.Services.AddScoped<IDocumentTypeRepository,DocumentTypeService>();
 builder.Services.AddScoped<IInterviewTypeRepository,InterviewTypeService>();
+builder.Services.AddScoped<IPositionRepository,PositionService>();
+builder.Services.AddScoped<IOrganisationTypeRepository,OrganisationTypeService>();
+builder.Services.AddScoped<IOrganisationRepository,OrganisationService>();
+builder.Services.AddScoped<ITokenService,TokenService>();
 
-//Database Connection
-var provider = builder.Services.BuildServiceProvider();
-var config = provider.GetRequiredService<IConfiguration>();
-
+//-------------------Database Connection--------------------------------------------------
 builder.Services.AddDbContext<ApplicationContext>(opt => 
-    opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+//----------------------------------------------------------------------------------------
+
+//------------------Configuring Authentication--------------------------------------------
+builder.Services.AddIdentity<Users,IdentityRole>(opt=>{
+    opt.Password.RequireDigit = true;
+    opt.Password.RequireLowercase = true;
+    opt.Password.RequireUppercase = true;
+    opt.Password.RequireNonAlphanumeric = true;
+    opt.Password.RequiredLength = 12;
+})
+.AddEntityFrameworkStores<ApplicationContext>();
+
+builder.Services.AddAuthentication(opt=>{
+    opt.DefaultAuthenticateScheme = 
+    opt.DefaultChallengeScheme =
+    opt.DefaultForbidScheme = 
+    opt.DefaultScheme = 
+    opt.DefaultSignInScheme = 
+    opt.DefaultSignOutScheme = 
+    JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(opt=>{
+    opt.TokenValidationParameters = new TokenValidationParameters{
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey( System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:Signingkey"]))
+    };
+});
+
+//----------------------------------------------------------------------------------------
+
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -34,6 +78,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//Authentication Part
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseRouting();
 app.MapControllers();
 

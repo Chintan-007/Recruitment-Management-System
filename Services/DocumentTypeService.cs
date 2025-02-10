@@ -35,7 +35,7 @@ public class DocumentTypeService : IDocumentTypeRepository
      public async Task<DocumentType> GetDocumentTypeByDocumentType(string documentType)
     {
         return await applicationContext.DocumentTypes
-                    .FirstOrDefaultAsync(dt => dt.documentType.Equals(documentType));
+                    .FirstOrDefaultAsync(dt => dt.documentType.ToLower().Equals(documentType.ToLower()));
     }
     
 

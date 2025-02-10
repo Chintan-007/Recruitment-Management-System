@@ -10,7 +10,7 @@ public class DocumentType
 
     [Required]
     [StringLength(100, MinimumLength =2)]
-    public String documentType{get; set;}
+    public string documentType{get; set;}  = string.Empty;
 
-    public DateTime createdAt = DateTime.Now;
+    public DateTime createdAt{get;} = DateTime.Now;
 }

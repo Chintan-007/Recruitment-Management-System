@@ -1,21 +1,21 @@
-using RecruitmentManagement.Models;
+// using RecruitmentManagement.Models;
 
-namespace RecruitmentManagement.Repositories;
+// namespace RecruitmentManagement.Repositories;
 
-public interface IUserTypeRepository
-{
-    //Create
-    Task<UserType> AddUserType(UserType userType);
+// public interface IUserTypeRepository
+// {
+//     //Create
+//     Task<UserType> AddUserType(UserType userType);
 
-    //Read
-    Task<IEnumerable<UserType>> GetUserTypes();
-    Task<UserType> GetUserTypeById(long id);
-    Task<UserType> GetUserTypeByTypeOfUser(string type);
+//     //Read
+//     Task<IEnumerable<UserType>> GetUserTypes();
+//     Task<UserType> GetUserTypeById(long id);
+//     Task<UserType> GetUserTypeByTypeOfUser(string type);
 
-    //Update
-    Task<UserType> UpdateUserType(long id,UserType userType);
+//     //Update
+//     Task<UserType> UpdateUserType(long id,UserType userType);
 
-    //Delete
-    Task<UserType> DeleteUserType(long id);
+//     //Delete
+//     Task<UserType> DeleteUserType(long id);
     
-}
+// }

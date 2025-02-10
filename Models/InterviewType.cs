@@ -10,7 +10,7 @@ public class InterviewType
 
     [Required]
     [StringLength(100,MinimumLength=2)]
-    public string interviewType{get; set;}
+    public string interviewType{get; set;} = string.Empty;
 
-    public DateTime createdAt = DateTime.Now;
+    public DateTime createdAt{get;} = DateTime.Now;
 }

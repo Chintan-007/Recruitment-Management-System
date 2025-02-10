@@ -33,7 +33,7 @@ public class InterviewTypeService : IInterviewTypeRepository
     }
     public async Task<InterviewType> GetInterviewTypeByType(string type)
     {
-        return await applicationContext.InterviewTypes.FirstOrDefaultAsync(rhType => rhType.interviewType.Equals(type));
+        return await applicationContext.InterviewTypes.FirstOrDefaultAsync(rhType => rhType.interviewType.ToLower().Equals(type.ToLower()));
     }
 
 
@@ -45,9 +45,8 @@ public class InterviewTypeService : IInterviewTypeRepository
         if(result != null){
             result.interviewType = interviewType.interviewType;
             await applicationContext.SaveChangesAsync();
-            return result;
         }
-        return null;
+        return result;
     }
 
 
