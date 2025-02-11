@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using RecruitmentManagement.Models;
 
-namespace RecruitmentManagement.DTOs.Organisation;
+namespace RecruitmentManagement.DTOs.Candidates;
 
-public class CreateOrganisationDto{
-
+public class CreateCandidateDto
+{
     [Required]
     [StringLength(100),MinLength(2)]
     public string firstName{get; set;} = string.Empty;
@@ -16,28 +16,34 @@ public class CreateOrganisationDto{
     [Required]
     [StringLength(100),MinLength(2)]
     public string userName{get; set;} = string.Empty;
-
+    
+    [Required]
+    [Range(18, 80, ErrorMessage = "Age must be between 18 & 80")]
+    public int age{get;set;}
+    
     [Required]
     [StringLength(70),MinLength(5)]
     public string email{get;set;} = string.Empty;
 
     [Required]
     [StringLength(15),MinLength(10)]
-    public string contact{get;set;} = string.Empty;
-
-    [Required]
-    public string AddressLine1{get; set;} = string.Empty;
-
-    public string AddressLine2{get; set;} = string.Empty;
-
-    [Required]
-    public string about{get; set;} = string.Empty;
+    public string phoneNumber{get;set;} = string.Empty;
 
     [Required]
     public string password{get; set;} = string.Empty;
 
     [Required]
-    public int organisationTypeId{get;set;}
+    public int  positionId{get; set;}
+    
+    [Required]
+    public int yearsOfExperience{get; set;}
 
+    [Required]
+    public string resumeLink{get; set;} = string.Empty;
+    
+    [Required]
+    public string organisationName{get;set;} = string.Empty;
 
+    [Required]
+    public List<int> candidateSkillsIds = new List<int>();   
 }

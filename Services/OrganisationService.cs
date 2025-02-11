@@ -22,9 +22,9 @@ public class OrganisationService : IOrganisationRepository
 
 
     //Read
-    public async Task<Organisation> GetOrganisationById(int id)
+    public async Task<Organisation> GetOrganisationById(string id)
     {
-        return await applicationContext.Organisations.Include(org=>org.organisationType).FirstOrDefaultAsync(org => org.id == id);
+        return await applicationContext.Organisations.Include(org=>org.organisationType).FirstOrDefaultAsync(org => org.Id == id);
     }
 
     public async Task<IEnumerable<Organisation>> GetOrganisations()
@@ -34,23 +34,23 @@ public class OrganisationService : IOrganisationRepository
 
     public async Task<Organisation> GetOrganisatoinByName(string name)
     {
-        return await applicationContext.Organisations.FirstOrDefaultAsync(ot => ot.organisationName.ToLower().Equals(name.ToLower()));
+        return await applicationContext.Organisations.FirstOrDefaultAsync(ot => ot.UserName.ToLower().Equals(name.ToLower()));
     }
 
 
 
     //Update
-    public async Task<Organisation> UpdateOrgranisationById(int id, Organisation organisation)
+    public async Task<Organisation> UpdateOrgranisationById(string id, Organisation organisation)
     {
         var result = await GetOrganisationById(id);
         if(result != null){
-            result.organisationName = organisation.organisationName;
+            result.UserName = organisation.UserName;
             await applicationContext.SaveChangesAsync();
         }
         return result;
     }
 
-    public async Task<Organisation> DisableOrganisationById(int id,string reason)
+    public async Task<Organisation> DisableOrganisationById(string id,string reason)
     {
          var result = await GetOrganisationById(id);
         if(result != null){
@@ -61,7 +61,7 @@ public class OrganisationService : IOrganisationRepository
         return result;
     }
     
-    public async Task<Organisation> EnableOrganisationById(int id){
+    public async Task<Organisation> EnableOrganisationById(string id){
         var result = await GetOrganisationById(id);
         if(result != null){
             result.isActive = true;
@@ -73,7 +73,7 @@ public class OrganisationService : IOrganisationRepository
 
     
     //Delete
-    public async Task<Organisation> DeleteOrganisationById(int id){
+    public async Task<Organisation> DeleteOrganisationById(string id){
         var result = await GetOrganisationById(id);
         if(result != null){
             applicationContext.Remove(result);

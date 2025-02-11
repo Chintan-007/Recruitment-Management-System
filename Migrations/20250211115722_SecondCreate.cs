@@ -2,12 +2,10 @@
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace RecruitmentManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class SeededRoles : Migration
+    public partial class SecondCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,11 +13,7 @@ namespace RecruitmentManagement.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "Admin", null, "Admin", "ADMIN" },
-                    { "User", null, "User", "USER" }
-                });
+                values: new object[] { "Employee", null, "Employee", "EMPLOYEE" });
         }
 
         /// <inheritdoc />
@@ -28,12 +22,7 @@ namespace RecruitmentManagement.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: "Admin");
-
-            migrationBuilder.DeleteData(
-                table: "AspNetRoles",
-                keyColumn: "Id",
-                keyValue: "User");
+                keyValue: "Employee");
         }
     }
 }

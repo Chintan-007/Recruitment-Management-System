@@ -12,8 +12,8 @@ using RecruitmentManagement.Models;
 namespace RecruitmentManagement.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250210073605_InitialCreateIdentityAdded")]
-    partial class InitialCreateIdentityAdded
+    [Migration("20250211115722_SecondCreate")]
+    partial class SecondCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,32 @@ namespace RecruitmentManagement.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "Admin",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "User",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "Organisation",
+                            Name = "Organisation",
+                            NormalizedName = "ORGANISATION"
+                        },
+                        new
+                        {
+                            Id = "Employee",
+                            Name = "Employee",
+                            NormalizedName = "EMPLOYEE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -286,62 +312,6 @@ namespace RecruitmentManagement.Migrations
                     b.ToTable("JobTypes");
                 });
 
-            modelBuilder.Entity("RecruitmentManagement.Models.Organisation", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("AddressLine1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AddressLine2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("about")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("contact")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("disableReason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("organisationName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("organisationTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("organisationTypeId");
-
-                    b.ToTable("Organisations");
-                });
-
             modelBuilder.Entity("RecruitmentManagement.Models.OrganisationType", b =>
                 {
                     b.Property<int>("id")
@@ -378,24 +348,6 @@ namespace RecruitmentManagement.Migrations
                     b.ToTable("Positions");
                 });
 
-            modelBuilder.Entity("RecruitmentManagement.Models.UserType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("TypeOfUser")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserTypes");
-                });
-
             modelBuilder.Entity("RecruitmentManagement.Models.Users", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -403,16 +355,20 @@ namespace RecruitmentManagement.Migrations
                     b.Property<int>("age")
                         .HasColumnType("int");
 
+                    b.Property<string>("disableReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("firstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("userTypeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("usersTypeId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("userTypeId");
+                    b.Property<string>("lastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Users");
                 });
@@ -421,8 +377,8 @@ namespace RecruitmentManagement.Migrations
                 {
                     b.HasBaseType("RecruitmentManagement.Models.Users");
 
-                    b.Property<int?>("organisationId")
-                        .HasColumnType("int");
+                    b.Property<string>("organisationId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("positionId")
                         .HasColumnType("int");
@@ -435,6 +391,30 @@ namespace RecruitmentManagement.Migrations
                     b.HasIndex("positionId");
 
                     b.HasDiscriminator().HasValue("Employee");
+                });
+
+            modelBuilder.Entity("RecruitmentManagement.Models.Organisation", b =>
+                {
+                    b.HasBaseType("RecruitmentManagement.Models.Users");
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressLine2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("about")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("organisationTypeId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("organisationTypeId");
+
+                    b.HasDiscriminator().HasValue("Organisation");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -488,24 +468,6 @@ namespace RecruitmentManagement.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RecruitmentManagement.Models.Organisation", b =>
-                {
-                    b.HasOne("RecruitmentManagement.Models.OrganisationType", "organisationType")
-                        .WithMany("organisations")
-                        .HasForeignKey("organisationTypeId");
-
-                    b.Navigation("organisationType");
-                });
-
-            modelBuilder.Entity("RecruitmentManagement.Models.Users", b =>
-                {
-                    b.HasOne("RecruitmentManagement.Models.UserType", "userType")
-                        .WithMany("users")
-                        .HasForeignKey("userTypeId");
-
-                    b.Navigation("userType");
-                });
-
             modelBuilder.Entity("RecruitmentManagement.Models.Employee", b =>
                 {
                     b.HasOne("RecruitmentManagement.Models.Organisation", "organisation")
@@ -523,7 +485,11 @@ namespace RecruitmentManagement.Migrations
 
             modelBuilder.Entity("RecruitmentManagement.Models.Organisation", b =>
                 {
-                    b.Navigation("employees");
+                    b.HasOne("RecruitmentManagement.Models.OrganisationType", "organisationType")
+                        .WithMany("organisations")
+                        .HasForeignKey("organisationTypeId");
+
+                    b.Navigation("organisationType");
                 });
 
             modelBuilder.Entity("RecruitmentManagement.Models.OrganisationType", b =>
@@ -536,9 +502,9 @@ namespace RecruitmentManagement.Migrations
                     b.Navigation("employees");
                 });
 
-            modelBuilder.Entity("RecruitmentManagement.Models.UserType", b =>
+            modelBuilder.Entity("RecruitmentManagement.Models.Organisation", b =>
                 {
-                    b.Navigation("users");
+                    b.Navigation("employees");
                 });
 #pragma warning restore 612, 618
         }

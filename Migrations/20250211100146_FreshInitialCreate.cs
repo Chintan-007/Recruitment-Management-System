@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace RecruitmentManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateIdentityAdded : Migration
+    public partial class FreshInitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -91,19 +93,6 @@ namespace RecruitmentManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserTypes",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeOfUser = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -125,45 +114,23 @@ namespace RecruitmentManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Organisations",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    organisationName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    email = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    contact = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    about = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isActive = table.Column<bool>(type: "bit", nullable: false),
-                    disableReason = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    organisationTypeId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Organisations", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Organisations_OrganisationTypes_organisationTypeId",
-                        column: x => x.organisationTypeId,
-                        principalTable: "OrganisationTypes",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
+                    firstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    lastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     age = table.Column<int>(type: "int", nullable: true),
                     isActive = table.Column<bool>(type: "bit", nullable: true),
-                    usersTypeId = table.Column<int>(type: "int", nullable: true),
-                    userTypeId = table.Column<long>(type: "bigint", nullable: true),
-                    organisationId = table.Column<int>(type: "int", nullable: true),
+                    disableReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    organisationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     positionId = table.Column<int>(type: "int", nullable: true),
                     yearsOfExperience = table.Column<int>(type: "int", nullable: true),
+                    AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    about = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    organisationTypeId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -183,20 +150,20 @@ namespace RecruitmentManagement.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Organisations_organisationId",
+                        name: "FK_AspNetUsers_AspNetUsers_organisationId",
                         column: x => x.organisationId,
-                        principalTable: "Organisations",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_OrganisationTypes_organisationTypeId",
+                        column: x => x.organisationTypeId,
+                        principalTable: "OrganisationTypes",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Positions_positionId",
                         column: x => x.positionId,
                         principalTable: "Positions",
                         principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_UserTypes_userTypeId",
-                        column: x => x.userTypeId,
-                        principalTable: "UserTypes",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -284,6 +251,16 @@ namespace RecruitmentManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "Admin", null, "Admin", "ADMIN" },
+                    { "Organisation", null, "Organisation", "ORGANISATION" },
+                    { "User", null, "User", "USER" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -322,14 +299,14 @@ namespace RecruitmentManagement.Migrations
                 column: "organisationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_organisationTypeId",
+                table: "AspNetUsers",
+                column: "organisationTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_positionId",
                 table: "AspNetUsers",
                 column: "positionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_userTypeId",
-                table: "AspNetUsers",
-                column: "userTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -337,11 +314,6 @@ namespace RecruitmentManagement.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Organisations_organisationTypeId",
-                table: "Organisations",
-                column: "organisationTypeId");
         }
 
         /// <inheritdoc />
@@ -378,16 +350,10 @@ namespace RecruitmentManagement.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Organisations");
+                name: "OrganisationTypes");
 
             migrationBuilder.DropTable(
                 name: "Positions");
-
-            migrationBuilder.DropTable(
-                name: "UserTypes");
-
-            migrationBuilder.DropTable(
-                name: "OrganisationTypes");
         }
     }
 }
