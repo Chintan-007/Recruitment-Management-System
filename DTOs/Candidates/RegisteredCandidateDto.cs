@@ -26,5 +26,5 @@ public class RegisteredCandidateDto
     public string organisationName{get;set;} = string.Empty;
 
     public string token{get;set;} = string.Empty;
-    public List<CandidateSkill> candidateSkills = new List<CandidateSkill>();   
+    public IEnumerable<string> candidateSkills;  
 }

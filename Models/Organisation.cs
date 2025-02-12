@@ -15,5 +15,6 @@ public class Organisation : Users
     public int? organisationTypeId{get;set;}
     public OrganisationType? organisationType{get; set;}
     public List<Employee> employees{get;set;} = new List<Employee>();
+    public List<JobOpening> jobOpenings{get;set;} = new List<JobOpening>();
 
 }

@@ -11,6 +11,8 @@ public class DocumentType
     [Required]
     [StringLength(100, MinimumLength =2)]
     public string documentType{get; set;}  = string.Empty;
-
+    
+    public List<CandidateDocs> candidateDocs{get;set;} = new List<CandidateDocs>(); 
+    
     public DateTime createdAt{get;} = DateTime.Now;
 }

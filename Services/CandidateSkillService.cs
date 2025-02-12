@@ -13,23 +13,32 @@ public class CandidateSkillService : ICandidateSkillRepository
     }
 
     
-    public async Task AddSkillsToCandidate(string candidateId, List<int> skillIds)
+    public async Task AddSkillsToCandidate(Candidate cand, List<int> skillIds)
     {       
-        var candidate = await applicationContext.Candidates
-                                  .Include(c => c.candidateSkills)
-                                  .FirstOrDefaultAsync(c => c.Id == candidateId);
 
-        // Create a list of CandidateSkill entities to add to the candidate
-        var candidateSkills = skillIds.Select(skillId => new CandidateSkill
-        {
-            candidateId = candidateId,
-            skillId = skillId
-        }).ToList();
-
-        // Add the skills to the candidate
-        candidate.candidateSkills.AddRange(candidateSkills);
-
+        try{
+       
+        foreach (int skillId in skillIds)
+        {   
+            Console.WriteLine("=======The skill Id is: "+skillId);
+            var skill = await applicationContext.Skills.FindAsync(skillId);
+            if(skill == null) Console.WriteLine("Skill we got is: null");
+            if (skill != null && cand !=null)
+            {
+                cand.candidateSkills.Add(new CandidateSkill
+                {
+                    candidateId = cand.Id,
+                    skillId = skillId
+                });
+                Console.WriteLine("==========Skill Added Id: "+skillId);
+            }
+        }
+    
         // Save changes to the database
-        await applicationContext.SaveChangesAsync();
+        // await applicationContext.SaveChangesAsync();
+        }
+        catch(Exception){
+            
+        }
     }
 }

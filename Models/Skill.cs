@@ -12,4 +12,6 @@ public class Skill
     public string skillName{get;set;} = string.Empty;
 
     public List<CandidateSkill> candidateSkills = new List<CandidateSkill>();   
+    public List<JobSkill> jobSkills{get; set;} = new List<JobSkill>();
+
 }

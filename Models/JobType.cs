@@ -10,7 +10,9 @@ public class JobType
 
     [Required]
     [StringLength(100,MinimumLength=2)]
-    public string JobTypeType{get; set;} = string.Empty;
+    public string type{get; set;} = string.Empty;
+
+    public List<JobOpening> jobOpenings{get;set;} = new List<JobOpening>();
 
     public DateTime createdAt{get;} = DateTime.Now;
 }

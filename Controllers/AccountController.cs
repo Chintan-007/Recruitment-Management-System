@@ -173,13 +173,16 @@ public class AccountController : ControllerBase
             }
 
             var cand = createCandidateDto.CandidateDtoToModel(pos);
+            // Add skills to the candidate
+            await candidateSkillRepository.AddSkillsToCandidate(cand,createCandidateDto.candidateSkillsIds);
+
+           
             var createdCand = await userManager.CreateAsync(cand,createCandidateDto.password);
-
-
+            // Console.WriteLine("-----------------These are candidate Skills: ------------\n"+createCandidateDto.candidateSkillsIds[1]);
+        
             if(createdCand.Succeeded){
                 var roleResult = await userManager.AddToRoleAsync(cand,"Candidate");
                 if(roleResult.Succeeded){
-                    await candidateSkillRepository.AddSkillsToCandidate(cand.Id,createCandidateDto.candidateSkillsIds);
                     return Ok(cand.CandidateModelToDto(tokenService.CreateToken(cand)));
                 }
                 else{

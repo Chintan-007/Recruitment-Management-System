@@ -9,8 +9,7 @@ public class Employee : Users{
 
     public Organisation? organisation{get; set;}
     
-    public int? positionId{get; set;}
-    public Position position{get; set;}
-
-    public int yearsOfExperience{get; set;}
+    public List<CandidateDocs> candidateDocs{get;set;} = new List<CandidateDocs>();
+    public List<RoundHandler> roundHandlers{get; set;} = new List<RoundHandler>();
+    
 }

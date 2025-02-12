@@ -12,5 +12,7 @@ public class InterviewType
     [StringLength(100,MinimumLength=2)]
     public string interviewType{get; set;} = string.Empty;
 
+    public List<ScheduledInterview> scheduledInterviews{get; set;} = new List<ScheduledInterview>();
+
     public DateTime createdAt{get;} = DateTime.Now;
 }

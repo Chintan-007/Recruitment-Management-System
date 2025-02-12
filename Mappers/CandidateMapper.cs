@@ -7,6 +7,7 @@ namespace RecruitmentManagement.Mappers;
 public static class CandidateMapper
 {
     public static RegisteredCandidateDto CandidateModelToDto(this Candidate candidateModel, string canToken){
+        var skills =candidateModel.candidateSkills.Select(cs => cs.skill.skillName);
         return new RegisteredCandidateDto{
             firstName = candidateModel.firstName,
             lastName = candidateModel.lastName,
@@ -19,7 +20,7 @@ public static class CandidateMapper
             position = candidateModel.position.position,
             yearsOfExperience = candidateModel.yearsOfExperience,
             resumeLink = candidateModel.resumeLink,
-            candidateSkills = candidateModel.candidateSkills
+            candidateSkills = skills
         };
     }
 

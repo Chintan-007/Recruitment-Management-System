@@ -54,6 +54,7 @@ builder.Services.AddScoped<IInterviewTypeRepository,InterviewTypeService>();
 builder.Services.AddScoped<IPositionRepository,PositionService>();
 builder.Services.AddScoped<IOrganisationTypeRepository,OrganisationTypeService>();
 builder.Services.AddScoped<IOrganisationRepository,OrganisationService>();
+builder.Services.AddScoped<ICandidateSkillRepository,CandidateSkillService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 
 //-------------------Database Connection--------------------------------------------------
