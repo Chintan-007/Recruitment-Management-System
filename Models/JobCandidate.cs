@@ -14,7 +14,7 @@ public class JobCandidate{
     public int jobOpeningId{get; set;}
     public JobOpening jobOpening{get; set;}
 
-    public string candidateId{get; set;}
+    public string candidateId{get; set;} = string.Empty;
     public Candidate candidate{get; set;}
 
     public List<ScheduledInterview> scheduledInterviews{get; set;} = new List<ScheduledInterview>();

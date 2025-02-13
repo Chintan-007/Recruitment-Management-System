@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using RecruitmentManagement.DTOs.Organisation;
+using RecruitmentManagement.DTOs.Organisations;
 using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;

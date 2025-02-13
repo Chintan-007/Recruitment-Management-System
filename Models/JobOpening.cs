@@ -7,6 +7,7 @@ public class JobOpening
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int JobOpeningId{get;set;}
 
+    public string jobName{get;set;} = string.Empty;
     public string jobDescription{get;set;} = string.Empty;
     public int experienceRequired{get;set;}
     public double minSalary{get;set;}
@@ -15,8 +16,8 @@ public class JobOpening
     public DateTime deadLine{get;set;}
     public string addtionalInfo{get;set;} = string.Empty;
 
-    public int positionId;
-    public Position position;
+    public int positionId{get;set;}
+    public Position position{get;set;}
 
     public string organisationId{get;set;}
     public Organisation organisation{get;set;}
@@ -31,5 +32,5 @@ public class JobOpening
     public List<JobCandidate> jobCandidates{get; set;} = new List<JobCandidate>();
     // public List<ScheduledInterview> scheduledInterviews{get; set;} = new List<ScheduledInterview>();
 
-    public DateTime createdAt = DateTime.Now;
+    public DateTime createdAt{get;} = DateTime.Now;
 }

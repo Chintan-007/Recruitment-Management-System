@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecruitmentManagement.Models;
 
@@ -11,9 +12,11 @@ using RecruitmentManagement.Models;
 namespace RecruitmentManagement.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250213100717_FreshInitialCreate2")]
+    partial class FreshInitialCreate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -444,7 +447,7 @@ namespace RecruitmentManagement.Migrations
                     b.Property<bool>("isRequired")
                         .HasColumnType("bit");
 
-                    b.HasKey("jobOpeningId", "skillId");
+                    b.HasKey("jobOpeningId", "skillId", "isRequired");
 
                     b.HasIndex("skillId");
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecruitmentManagement.DTOs.Candidates;
 using RecruitmentManagement.DTOs.Employees;
-using RecruitmentManagement.DTOs.Organisation;
+using RecruitmentManagement.DTOs.Organisations;
 using RecruitmentManagement.DTOs.Users;
 using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Repositories;

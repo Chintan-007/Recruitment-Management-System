@@ -1,5 +1,5 @@
 
-using RecruitmentManagement.DTOs.Organisation;
+using RecruitmentManagement.DTOs.Organisations;
 using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.Mappers;

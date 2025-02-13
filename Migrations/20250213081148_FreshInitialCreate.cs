@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RecruitmentManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedAllNecessaryModels : Migration
+    public partial class FreshInitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -341,6 +341,7 @@ namespace RecruitmentManagement.Migrations
                 {
                     JobOpeningId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    jobName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     jobDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     experienceRequired = table.Column<int>(type: "int", nullable: false),
                     minSalary = table.Column<double>(type: "float", nullable: false),
@@ -348,10 +349,10 @@ namespace RecruitmentManagement.Migrations
                     requiredCandidates = table.Column<int>(type: "int", nullable: false),
                     deadLine = table.Column<DateTime>(type: "datetime2", nullable: false),
                     addtionalInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    positionId = table.Column<int>(type: "int", nullable: false),
                     organisationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     jobTypeId = table.Column<int>(type: "int", nullable: false),
-                    jobStatusId = table.Column<int>(type: "int", nullable: false),
-                    positionId = table.Column<int>(type: "int", nullable: false)
+                    jobStatusId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -415,7 +416,7 @@ namespace RecruitmentManagement.Migrations
                 {
                     jobOpeningId = table.Column<int>(type: "int", nullable: false),
                     skillId = table.Column<int>(type: "int", nullable: false),
-                    jobSkillId = table.Column<int>(type: "int", nullable: false)
+                    isRequired = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -427,8 +428,8 @@ namespace RecruitmentManagement.Migrations
                         principalColumn: "JobOpeningId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_JobSkills_Skills_jobSkillId",
-                        column: x => x.jobSkillId,
+                        name: "FK_JobSkills_Skills_skillId",
+                        column: x => x.skillId,
                         principalTable: "Skills",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -596,9 +597,9 @@ namespace RecruitmentManagement.Migrations
                 column: "positionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSkills_jobSkillId",
+                name: "IX_JobSkills_skillId",
                 table: "JobSkills",
-                column: "jobSkillId");
+                column: "skillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoundHandlers_scheduledInterviewJobOpeningId_scheduledInterviewCandidateId_scheduledInterviewInterviewTypeId",

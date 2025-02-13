@@ -12,8 +12,8 @@ using RecruitmentManagement.Models;
 namespace RecruitmentManagement.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250212140309_AddedAllNecessaryModels")]
-    partial class AddedAllNecessaryModels
+    [Migration("20250213124021_FreshInitialCreate3")]
+    partial class FreshInitialCreate3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -397,6 +397,10 @@ namespace RecruitmentManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("jobName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("jobStatusId")
                         .HasColumnType("int");
 
@@ -440,13 +444,12 @@ namespace RecruitmentManagement.Migrations
                     b.Property<int>("skillId")
                         .HasColumnType("int");
 
-                    b.Property<int>("jobSkillId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<bool>("isRequired")
+                        .HasColumnType("bit");
 
                     b.HasKey("jobOpeningId", "skillId");
 
-                    b.HasIndex("jobSkillId");
+                    b.HasIndex("skillId");
 
                     b.ToTable("JobSkills");
                 });
@@ -849,7 +852,7 @@ namespace RecruitmentManagement.Migrations
 
                     b.HasOne("RecruitmentManagement.Models.Skill", "skill")
                         .WithMany("jobSkills")
-                        .HasForeignKey("jobSkillId")
+                        .HasForeignKey("skillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

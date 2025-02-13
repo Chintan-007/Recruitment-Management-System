@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using RecruitmentManagement.Models;
 
-namespace RecruitmentManagement.DTOs.Organisation;
+namespace RecruitmentManagement.DTOs.Organisations;
 
 public class CreateOrganisationDto{
 

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
+using RecruitmentManagement.Service;
 using RecruitmentManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IPositionRepository,PositionService>();
 builder.Services.AddScoped<IOrganisationTypeRepository,OrganisationTypeService>();
 builder.Services.AddScoped<IOrganisationRepository,OrganisationService>();
 builder.Services.AddScoped<ICandidateSkillRepository,CandidateSkillService>();
+builder.Services.AddScoped<IJobOpeningRepository,JobOpeningService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 
 //-------------------Database Connection--------------------------------------------------

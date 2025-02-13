@@ -20,9 +20,7 @@ public class CandidateSkillService : ICandidateSkillRepository
        
         foreach (int skillId in skillIds)
         {   
-            Console.WriteLine("=======The skill Id is: "+skillId);
             var skill = await applicationContext.Skills.FindAsync(skillId);
-            if(skill == null) Console.WriteLine("Skill we got is: null");
             if (skill != null && cand !=null)
             {
                 cand.candidateSkills.Add(new CandidateSkill
@@ -30,7 +28,6 @@ public class CandidateSkillService : ICandidateSkillRepository
                     candidateId = cand.Id,
                     skillId = skillId
                 });
-                Console.WriteLine("==========Skill Added Id: "+skillId);
             }
         }
     

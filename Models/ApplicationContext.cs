@@ -154,7 +154,7 @@ public class ApplicationContext : IdentityDbContext{
         builder.Entity<JobSkill>()
             .HasOne(js=>js.skill)
             .WithMany(s=> s.jobSkills)
-            .HasForeignKey(js => js.jobSkillId);
+            .HasForeignKey(js => js.skillId);
 
 
         //Relating jobCandidate with jobopening and candidate
