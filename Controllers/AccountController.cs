@@ -210,7 +210,7 @@ public class AccountController : ControllerBase
 
         var result = await signInManager.CheckPasswordSignInAsync(user,loignDto.password,false);
 
-        if(!result.Succeeded) return Unauthorized("Wring credentials !");
+        if(!result.Succeeded) return Unauthorized("Wrong credentials !");
 
         return Ok(
             new CreatedUserDto{

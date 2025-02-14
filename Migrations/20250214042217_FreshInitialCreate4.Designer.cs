@@ -12,8 +12,8 @@ using RecruitmentManagement.Models;
 namespace RecruitmentManagement.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250213124021_FreshInitialCreate3")]
-    partial class FreshInitialCreate3
+    [Migration("20250214042217_FreshInitialCreate4")]
+    partial class FreshInitialCreate4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -361,6 +361,9 @@ namespace RecruitmentManagement.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<bool>("isFiltered")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("isSelected")
                         .HasColumnType("bit");

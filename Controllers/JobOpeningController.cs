@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
 using RecruitmentManagement.Mappers;
-using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
-using RecruitmentManagement.Service;
 
 namespace RecruitmentManagement.Controllers;
 
@@ -19,6 +18,7 @@ public class JobOpeningController : ControllerBase
 
     //Create
     [HttpPost]
+    [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<AddedJobOpeningDto>> AddJobOpening(CreateJobOpeningDto createJobOpeningDto){
         try{
             if(!ModelState.IsValid){
@@ -36,28 +36,42 @@ public class JobOpeningController : ControllerBase
 
 
     //Read
-    [HttpGet]
-    public async Task<ActionResult<GetJobOpeningDto>> GetJobOpeningById(int id){
+    [HttpGet("id:int")]
+    public async Task<ActionResult<AddedJobOpeningDto>> GetJobOpeningById(int id){
         try{
             var jobOpening =  await jobOpeningRepository.GetJobOpeningById(id);
             if(jobOpening == null){
                 return NotFound();
             }
-            if(jobOpening.jobSkills == null){
+            // foreach(var js in jobOpening.jobSkills){
+            //     Console.WriteLine("==============JobSkill is: "+js.skill);
+            // }
+        
+            return jobOpening.ModelToAddedJobOpeningDto();
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetJobOpenings(){
+        try{
+            var jobOpenings =  await jobOpeningRepository.GetJobOpenings();
+            if(jobOpenings == null){
                 return NotFound();
             }
-            return jobOpening.ModelToGetJobOpeningDto();
+        
+            return Ok(jobOpenings.Select(jo=> jo.ModelToAddedJobOpeningDto()));
         }
-        catch(Exception){
-            return StatusCode(StatusCodes.Status500InternalServerError);
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
         }
     }
 
 
-
-
     [HttpPut]
-    public async Task<ActionResult<AddedJobOpeningDto>> UpdateJobOpening(int jobOpeningId,CreateJobOpeningDto createJobOpeningDto){
+    public async Task<ActionResult<AddedJobOpeningDto>> UpdateJobOpening(int jobOpeningId,UpdateJobOpeningDto updateJobOpeningDto){
         try{
             if(!ModelState.IsValid){
                 return BadRequest();
@@ -66,11 +80,12 @@ public class JobOpeningController : ControllerBase
             if(jobOpening == null){
                 return NotFound($"Job opening with id: {jobOpeningId} not found");
             }
-            var updatedJobOpening = await jobOpeningRepository.UpdateJobOpeningById(jobOpeningId,createJobOpeningDto);           
+            var updatedJobOpening = await jobOpeningRepository.UpdateJobOpeningById(jobOpeningId,updateJobOpeningDto);           
             return updatedJobOpening.ModelToAddedJobOpeningDto();
         }
         catch(Exception e){
             return StatusCode(StatusCodes.Status500InternalServerError,e);
         }
     }
+
 }

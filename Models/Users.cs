@@ -5,8 +5,8 @@ namespace RecruitmentManagement.Models;
 
 public class Users:IdentityUser{
   
-    public string firstName{get;set;}
-    public string lastName{get;set;}
+    public string firstName{get;set;} = string.Empty;
+    public string lastName{get;set;} = string.Empty;
     public int age{get;set;}
     public int? positionId{get; set;}
     public Position position{get; set;}

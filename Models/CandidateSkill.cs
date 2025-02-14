@@ -8,8 +8,8 @@ public class CandidateSkill
     public int candidateSkillId;
     
     public string candidateId{get;set;} = string.Empty;
-    public Candidate candidate{get;set;}
+    public Candidate? candidate{get;set;}
 
     public int skillId{get;set;}
-    public Skill skill{get;set;}
+    public Skill? skill{get;set;}
 }

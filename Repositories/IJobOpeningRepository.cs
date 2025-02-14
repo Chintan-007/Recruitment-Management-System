@@ -1,3 +1,4 @@
+using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
 using RecruitmentManagement.Models;
 
@@ -14,7 +15,8 @@ public interface IJobOpeningRepository
     public Task<JobOpening> GetJobOpeningByName(string name);
 
     // Update
-    public Task<JobOpening> UpdateJobOpeningById(int id, CreateJobOpeningDto createJobOpeningDto);
+    public Task<JobOpening> UpdateJobOpeningById(int id, UpdateJobOpeningDto updateJobOpeningDto);
+    public Task<JobOpening> AddJobCandidate(int jobOpeningId,NewJobCandidateDto jobCandidateDto);
     // public Task<JobOpening> EnableJobOpeningById(int id);
 
     // Delete

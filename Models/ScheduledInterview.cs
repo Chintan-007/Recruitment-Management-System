@@ -20,10 +20,12 @@ public class ScheduledInterview
     // public JobOpening jobOpening{get;set;}
     public string candidateId{get;set;} = string.Empty;
     // public Candidate candidate{get;set;}
-    public JobCandidate jobCandidate{get; set;}
+
+    public int jobCandidateId{get;set;}
+    public JobCandidate? jobCandidate{get; set;}
 
     public int interviewTypeId{get; set;}
-    public InterviewType interviewType{get; set;}
+    public InterviewType? interviewType{get; set;}
 
     public List<RoundHandler> roundHandlers{get; set;} = new List<RoundHandler>();
 }

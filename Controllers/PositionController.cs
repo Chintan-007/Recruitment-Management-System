@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
@@ -16,6 +17,7 @@ public class PositionController : ControllerBase{
 
     //Create
     [HttpPost]
+    [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<Position>> AddPosition(Position position){
        try{
 

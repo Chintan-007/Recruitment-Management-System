@@ -13,6 +13,8 @@ public class JobSkill
     public JobOpening jobOpening{get; set;}
 
     public int skillId{get; set;}
+
+    [Required]
     public Skill skill{get; set;}
 
     public bool isRequired{get;set;} = true;

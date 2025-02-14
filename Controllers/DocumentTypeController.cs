@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagement.Models;
@@ -18,6 +19,7 @@ public class DocumentTypeController : ControllerBase
 
     //Create
     [HttpPost]
+    [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<DocumentType>> AddDocumentType(DocumentType documentType){
         try{
             if(documentType == null){

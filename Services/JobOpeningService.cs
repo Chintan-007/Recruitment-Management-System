@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
 using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Models;
@@ -76,7 +77,16 @@ public class JobOpeningService : IJobOpeningRepository
 //===============================================Read==============================================================================
     public async Task<JobOpening> GetJobOpeningById(int id)
     {
-        return await applicationContext.JobOpenings.Include(jo=>jo.position).Include(jo=>jo.organisation).Include(jo=>jo.jobStatus).Include(jo=>jo.jobType).Include(jo=>jo.jobSkills).FirstOrDefaultAsync(jo => jo.JobOpeningId==id);
+        return await applicationContext.JobOpenings
+                    .Include(jo=>jo.position)
+                    .Include(jo=>jo.organisation)
+                    .Include(jo=>jo.jobStatus)
+                    .Include(jo=>jo.jobType)
+                    .Include(jo=>jo.jobSkills)
+                        .ThenInclude(js => js.skill)
+                    .Include(jo=>jo.jobCandidates)
+                        .ThenInclude(jc=>jc.candidate)
+                    .FirstOrDefaultAsync(jo => jo.JobOpeningId==id);
     }
 
     public async Task<JobOpening> GetJobOpeningByName(string name)
@@ -86,13 +96,20 @@ public class JobOpeningService : IJobOpeningRepository
 
     public async Task<IEnumerable<JobOpening>> GetJobOpenings()
     {
-        return await applicationContext.JobOpenings.ToListAsync();
+        return await applicationContext.JobOpenings
+                    .Include(jo=>jo.position)
+                    .Include(jo=>jo.organisation)
+                    .Include(jo=>jo.jobStatus)
+                    .Include(jo=>jo.jobType)
+                    .Include(jo=>jo.jobSkills)
+                        .ThenInclude(js => js.skill)
+                    .ToListAsync();
     }
 
 
 
 //==============================================Update=====================================================================
-    public async Task<JobOpening> UpdateJobOpeningById(int jobOpeningId, CreateJobOpeningDto createJobOpeningDto)
+    public async Task<JobOpening> UpdateJobOpeningById(int jobOpeningId, UpdateJobOpeningDto createJobOpeningDto)
     {
         //Validationg all the data respected to their Id's
         var position = await positionRepository.GetPositionById(createJobOpeningDto.positionId);
@@ -137,24 +154,6 @@ public class JobOpeningService : IJobOpeningRepository
                     isRequired = js.isRequired,
                 });
             }
-
-            // List<JobCandidate> newJobCandidates = new List<JobCandidate>();
-            // foreach (var js in createJobOpeningDto.jobCandidates)
-            // {
-            //     var candidate = await applicationContext.Candidates.FindAsync(js.candidateId);
-            //     if (candidate == null)
-            //     {
-            //         throw new Exception("Invalid CandidateId id: " + js.candidateId);
-
-            //     }
-
-            //     newJobSkills.Add(new JobCandidate
-            //     {
-            //         jobOpeningId = jobOpeningId,
-            //         skillId = js.skillId,
-            //         isRequired = js.isRequired,
-            //     });
-            // }
             
             result.jobName = createJobOpeningDto.jobName;
             result.jobDescription = createJobOpeningDto.jobDescription;
@@ -169,11 +168,30 @@ public class JobOpeningService : IJobOpeningRepository
             result.jobType = jobType;
             result.jobStatus = jobStatus;
             result.jobSkills = newJobSkills;
-                // result.jobCandidates = jobOpening.jobCandidates;
             await applicationContext.SaveChangesAsync();
         }
         return result;
     }
+
+public async Task<JobOpening> AddJobCandidate(int jobOpeningId,NewJobCandidateDto jobCandidateDto){
+        
+        var candidate = await applicationContext.Candidates.FindAsync(jobCandidateDto.candidateId);
+        if(candidate == null){
+            throw new Exception("Invalid Candidate Id...!");
+        }
+
+        var result = await GetJobOpeningById(jobOpeningId);       
+
+        if(result != null){
+            result.jobCandidates.Add(new JobCandidate{
+                candidateId = jobCandidateDto.candidateId,
+                noOfInterviewRounds = jobCandidateDto.interviewRounds
+            });
+
+            await applicationContext.SaveChangesAsync();
+        }
+        return result;
+}
 
 
 //==========================================Delete===================================================================
