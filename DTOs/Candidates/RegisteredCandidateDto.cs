@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using RecruitmentManagement.DTOs.CandidateDocs;
 using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.DTOs.Candidates;
@@ -26,5 +27,7 @@ public class RegisteredCandidateDto
     public string organisationName{get;set;} = string.Empty;
 
     public string token{get;set;} = string.Empty;
-    public IEnumerable<string> candidateSkills;  
+    public IEnumerable<string>? candidateSkills{get;set;}
+
+    public IEnumerable<DisplayDocs>? documentDetails{get;set;}
 }

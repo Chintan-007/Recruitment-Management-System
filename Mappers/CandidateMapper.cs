@@ -1,4 +1,5 @@
 
+using RecruitmentManagement.DTOs.CandidateDocs;
 using RecruitmentManagement.DTOs.Candidates;
 using RecruitmentManagement.Models;
 
@@ -20,7 +21,7 @@ public static class CandidateMapper
             position = candidateModel.position.position,
             yearsOfExperience = candidateModel.yearsOfExperience,
             resumeLink = candidateModel.resumeLink,
-            candidateSkills = skills
+            candidateSkills = skills,
         };
     }
 
@@ -38,5 +39,13 @@ public static class CandidateMapper
                 resumeLink = candidateDto.resumeLink
         };
 
+    }
+
+    public static AddedCandidateDocsDto AddedDocsModelToDto(this Candidate candidateModel,List<DisplayDocs> displayDocs){
+
+        return new AddedCandidateDocsDto{   
+            candidateId = candidateModel.Id,
+            documentDetails = displayDocs
+        };
     }
 }

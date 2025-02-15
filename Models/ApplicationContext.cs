@@ -98,7 +98,7 @@ public class ApplicationContext : IdentityDbContext{
 
         //Relating Candidate, DocumentType and employee(verfier)
         builder.Entity<CandidateDocs>()
-            .HasKey(cd => new{cd.candidateId,cd.documentTypeId,cd.verifiedById});
+            .HasKey(cd => new{cd.candidateId,cd.documentTypeId});
         
         builder.Entity<CandidateDocs>()
             .HasOne(cd => cd.documentType)

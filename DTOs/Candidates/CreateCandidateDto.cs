@@ -45,5 +45,5 @@ public class CreateCandidateDto
     public string organisationName{get;set;} = string.Empty;
 
     [Required]
-    public List<int> candidateSkillsIds = new List<int>();   
+    public List<int> candidateSkillsIds{get;set;} = new List<int>();   
 }

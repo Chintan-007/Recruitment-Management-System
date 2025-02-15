@@ -5,7 +5,7 @@ using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 
-namespace RecruitmentManagement.Service;
+namespace RecruitmentManagement.Services;
 
 public class JobOpeningService : IJobOpeningRepository
 {

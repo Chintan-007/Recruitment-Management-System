@@ -4,7 +4,7 @@ using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 
-namespace RecruitmentManagement.Service;
+namespace RecruitmentManagement.Services;
 
 public class ScheduleInterviewService : IScheduleInterviewRepository
 {
