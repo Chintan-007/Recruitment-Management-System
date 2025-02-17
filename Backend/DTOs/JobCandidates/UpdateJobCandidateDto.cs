@@ -4,8 +4,8 @@ namespace RecruitmentManagement.DTOs.JobCandidates;
 
 public class UpdateJobCandidateDto
 {
-    // [Required]
-    // public string candidateId{get;set;} = string.Empty;
+    [Required]
+    public string candidateId{get;set;} = string.Empty;
 
     [Required]
     public int interviewRounds{get;set;}

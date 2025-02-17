@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
@@ -19,37 +20,42 @@ public class JobCandidateController : ControllerBase
 
 
     //Create Job Candidates
-    [HttpPost("{jobOpeningId}")]
-    public async Task<ActionResult<AddedJobCandidateDto>> AddJobCandidate(int jobOpeningId,NewJobCandidateDto jobCandidateDto){
-        try{
-            if(!ModelState.IsValid){
-                return BadRequest();
-            }
-            var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
-            if(jobOpening == null){
-                return NotFound($"Job opening with id: {jobOpeningId} not found");
-            }
-            var updatedJobOpening = await jobOpeningRepository.AddJobCandidate(jobOpeningId,jobCandidateDto);           
-            return updatedJobOpening.ModelToAddedJobCandidateDto();
-        }
-        catch(Exception e){
-            return StatusCode(StatusCodes.Status500InternalServerError,e);
-        }
-    }
+    // [HttpPost("{jobOpeningId}")]
+    // [Authorize(Roles ="Organisation,Candidate")]
+    // public async Task<ActionResult<AddedJobCandidateDto>> AddJobCandidate(int jobOpeningId,NewJobCandidateDto jobCandidateDto){
+    //     try{
+    //         if(!ModelState.IsValid){
+    //             return BadRequest();
+    //         }
+    //         var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
+    //         if(jobOpening == null){
+    //             return NotFound($"Job opening with id: {jobOpeningId} not found");
+    //         }
+    //         var updatedJobOpening = await jobOpeningRepository.AddJobCandidate(jobOpeningId,jobCandidateDto);           
+    //         return updatedJobOpening.ModelToAddedJobCandidateDto();
+    //     }
+    //     catch(Exception e){
+    //         return StatusCode(StatusCodes.Status500InternalServerError,e);
+    //     }
+    // }
 
-    [HttpPut("{jobCandidateId}")]
-    public async Task<ActionResult<AfterUpdateJobCandidateDto>> UpdateJobCandidate(int jobCandidateId,UpdateJobCandidateDto jobCandidateDto){
-        try{
-            if(!ModelState.IsValid){
-                return BadRequest();
-            }
+
+
+
+    // [HttpPut("{jobCandidateId}")]
+    // [Authorize(Roles ="Organisation")]
+    // public async Task<ActionResult<AfterUpdateJobCandidateDto>> UpdateJobCandidate(int jobCandidateId,UpdateJobCandidateDto jobCandidateDto){
+    //     try{
+    //         if(!ModelState.IsValid){
+    //             return BadRequest();
+    //         }
             
-            var updatedJobCandidate = await jobCandidateRepository.UpdateJobCandidateById(jobCandidateId,jobCandidateDto);
-            return updatedJobCandidate.ModelToUpdatedJobCandidateDto();
-        }
-        catch(Exception e){
-            return StatusCode(StatusCodes.Status500InternalServerError,e);
-        }
-    }
+    //         var updatedJobCandidate = await jobCandidateRepository.UpdateJobCandidateById(jobCandidateId,jobCandidateDto);
+    //         return updatedJobCandidate.ModelToUpdatedJobCandidateDto();
+    //     }
+    //     catch(Exception e){
+    //         return StatusCode(StatusCodes.Status500InternalServerError,e);
+    //     }
+    // }
 
 }

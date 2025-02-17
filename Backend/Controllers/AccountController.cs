@@ -50,7 +50,9 @@ public class AccountController : ControllerBase
             }
             
             var appUser = new Users{
-                UserName = registerUserDto.name,
+                firstName = registerUserDto.firstname,
+                lastName = registerUserDto.lastname,
+                UserName = registerUserDto.username,
                 Email = registerUserDto.email,
                 PhoneNumber = registerUserDto.mobile,
                 age = registerUserDto.age,
@@ -65,7 +67,7 @@ public class AccountController : ControllerBase
                         new CreatedUserDto{
                             name = appUser.UserName,
                             email = appUser.Email,
-                            token = tokenService.CreateToken(appUser)
+                            token = await tokenService.CreateToken(appUser)
                         }
                     );
                 else
@@ -100,7 +102,7 @@ public class AccountController : ControllerBase
             if(createdOrg.Succeeded){
                 var roleResult = await userManager.AddToRoleAsync(org,"Organisation");
                 if(roleResult.Succeeded){
-                    return Ok(org.OrganisationModelToDto(tokenService.CreateToken(org)));
+                    return Ok(org.OrganisationModelToDto(await tokenService.CreateToken(org)));
                 }
                 else{
                     return StatusCode(500,roleResult.Errors);
@@ -140,7 +142,7 @@ public class AccountController : ControllerBase
             if(createdEmp.Succeeded){
                 var roleResult = await userManager.AddToRoleAsync(emp,"Employee");
                 if(roleResult.Succeeded){
-                    return Ok(emp.EmployeeModelToDto(tokenService.CreateToken(emp)));
+                    return Ok(emp.EmployeeModelToDto(await tokenService.CreateToken(emp)));
                 }
                 else{
                     return StatusCode(500,roleResult.Errors);
@@ -183,7 +185,7 @@ public class AccountController : ControllerBase
             if(createdCand.Succeeded){
                 var roleResult = await userManager.AddToRoleAsync(cand,"Candidate");
                 if(roleResult.Succeeded){
-                    return Ok(cand.CandidateModelToDto(tokenService.CreateToken(cand)));
+                    return Ok(cand.CandidateModelToDto(await tokenService.CreateToken(cand)));
                 }
                 else{
                     return StatusCode(500,roleResult.Errors);
@@ -216,7 +218,7 @@ public class AccountController : ControllerBase
             new CreatedUserDto{
                 name = user.UserName,
                 email = user.Email,
-                token = tokenService.CreateToken(user)
+                token = await tokenService.CreateToken(user)
             }
         );
     }

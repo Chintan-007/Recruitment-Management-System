@@ -16,38 +16,38 @@ public class ScheduleInterviewController : ControllerBase
 
     
     //Create
-    [HttpPost]
-    public async Task<ActionResult<AddedScheduledInterviewDto>> AddScheduledInterview(NewScheduledInterviewDto scheduledInterviewDto){
-        try{
-            if(!ModelState.IsValid){
-                return BadRequest();
-            }
+    // [HttpPost]
+    // public async Task<ActionResult<AddedScheduledInterviewDto>> AddScheduledInterview(NewScheduledInterviewDto scheduledInterviewDto){
+    //     try{
+    //         if(!ModelState.IsValid){
+    //             return BadRequest();
+    //         }
 
-            var scheduledInterview = await scheduleInterviewRepository.AddScheduledInterview(scheduledInterviewDto);
-            var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(scheduledInterviewDto.interviewTypeId);
-            List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
-            return scheduledInterview.ModelToAddedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
-        }
-        catch(Exception e){
-            return StatusCode(StatusCodes.Status500InternalServerError,e);
-        }
-    }
+    //         var scheduledInterview = await scheduleInterviewRepository.AddScheduledInterview(scheduledInterviewDto);
+    //         var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(scheduledInterviewDto.interviewTypeId);
+    //         List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
+    //         return scheduledInterview.ModelToAddedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
+    //     }
+    //     catch(Exception e){
+    //         return StatusCode(StatusCodes.Status500InternalServerError,e);
+    //     }
+    // }
 
     //Update
-    [HttpPut]
-    public async Task<ActionResult<AfterUpdateScheduleInterviewDto>> UpdateScheduledInterview(int scheduledInterviewId,UpdateScheduledInterviewDto scheduledInterviewDto){
-        try{
-            if(!ModelState.IsValid){
-                return BadRequest();
-            }
+    // [HttpPut]
+    // public async Task<ActionResult<AfterUpdateScheduleInterviewDto>> UpdateScheduledInterview(int scheduledInterviewId,UpdateScheduledInterviewDto scheduledInterviewDto){
+    //     try{
+    //         if(!ModelState.IsValid){
+    //             return BadRequest();
+    //         }
 
-            var updatedScheduledInterview = await scheduleInterviewRepository.UpdateScheduledInterview(scheduledInterviewId,scheduledInterviewDto);
-            var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(updatedScheduledInterview.interviewTypeId);
-            List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
-            return updatedScheduledInterview.ModelToUpdatedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
-        }
-        catch(Exception e){
-            return StatusCode(StatusCodes.Status500InternalServerError,e);
-        }
-    }
+    //         var updatedScheduledInterview = await scheduleInterviewRepository.UpdateScheduledInterview(scheduledInterviewId,scheduledInterviewDto);
+    //         var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(updatedScheduledInterview.interviewTypeId);
+    //         List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
+    //         return updatedScheduledInterview.ModelToUpdatedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
+    //     }
+    //     catch(Exception e){
+    //         return StatusCode(StatusCodes.Status500InternalServerError,e);
+    //     }
+    // }
 }

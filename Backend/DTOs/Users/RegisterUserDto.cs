@@ -10,7 +10,15 @@ public class RegisterUserDto
     
     [Required]
     [StringLength(100), MinLength(2)]
-    public string name{get;set;} = string.Empty;
+    public string firstname{get;set;} = string.Empty;
+
+    [Required]
+    [StringLength(100), MinLength(2)]
+    public string lastname{get;set;} = string.Empty;
+
+    [Required]
+    [StringLength(100), MinLength(2)]
+    public string username{get;set;} = string.Empty;
 
     [Required]
     [StringLength(100),MinLength(5),EmailAddress]

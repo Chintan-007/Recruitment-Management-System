@@ -21,7 +21,16 @@ public class JobCandidateService : IJobCandidateRepository
 
     public async Task<JobCandidate> GetJobCandidateById(int jobCandidateId)
     {
-        return await applicationContext.JobCandidates.FirstOrDefaultAsync(jc => jc.id ==jobCandidateId);
+        var result =  await applicationContext.JobCandidates
+                                        .Include(jc=>jc.jobOpening)
+                                        .FirstOrDefaultAsync(jc => jc.id ==jobCandidateId);
+        return result;
+    }
+
+    public async Task<JobCandidate> GetJobCandidateByjobOpeningIdAndcanidateId(int jobOpeningId, string candidateId)
+    {
+        var result = await applicationContext.JobCandidates.Include(jc=>jc.jobOpening).FirstOrDefaultAsync(jc => jc.jobOpeningId == jobOpeningId && jc.candidateId == candidateId);
+        return result;
     }
 
     public async Task<JobCandidate> UpdateJobCandidateById(int jobCandidateId, UpdateJobCandidateDto jobCandidateDto)

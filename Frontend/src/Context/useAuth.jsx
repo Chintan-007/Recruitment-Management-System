@@ -1,11 +1,11 @@
-import { createContext, use, useEffect, useState } from "react";
+import React, { createContext, use, useEffect, useState } from "react";
 import { UserProfile } from "../Models/User";
 import { useNavigate } from "react-router-dom";
 import { loginApi, registerApi } from "../Services/AuthService";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-UserContextType = {
+let UserContextType = {
     user:UserProfile | null,
     token:String|null,
     registerUser:(email,username,password) => {},

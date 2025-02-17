@@ -15,7 +15,10 @@ public class CandidateDocsService : ICandidateDocsRepository
     public async Task<Candidate> AddCandidateDocs(NewCandidateDocsDto newCandidateDocsDto)
     {
         //Validating the data
-        var candidate = await applicationContext.Candidates.Include(c=>c.candidateDocs).FirstOrDefaultAsync(c=>c.Id == newCandidateDocsDto.candidateId);
+        var candidate = await applicationContext.Candidates
+                            .Include(c=>c.candidateDocs)
+                                .ThenInclude(cd=>cd.documentType)
+                            .FirstOrDefaultAsync(c=>c.Id == newCandidateDocsDto.candidateId);
         if(candidate == null){
             throw new Exception("Candidate not found...!");
         }

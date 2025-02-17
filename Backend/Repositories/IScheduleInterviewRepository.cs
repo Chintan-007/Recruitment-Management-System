@@ -6,7 +6,7 @@ namespace RecruitmentManagement.Repositories;
 public interface    IScheduleInterviewRepository
 {
      //Create
-    Task<ScheduledInterview> AddScheduledInterview(NewScheduledInterviewDto scheduledInterviewDto);
+    Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto);
     Task<ScheduledInterview> UpdateScheduledInterview(int scheduledInterviewId,UpdateScheduledInterviewDto scheduledInterviewDto);
     Task<InterviewType> GetInterviewTypeById(int interviewTypeId);
     Task<List<string>> GetRounhandlerList(List<string> roundHandlers);

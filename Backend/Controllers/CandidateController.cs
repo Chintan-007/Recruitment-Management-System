@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecruitmentManagement.DTOs.CandidateDocs;
+using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Repositories;
 
@@ -11,11 +13,22 @@ public class CandidateController : ControllerBase
 {
     private readonly ICandidateDocsRepository candidateDocsRepository;
     private readonly IDocumentTypeRepository documentTypeRepository;
-    public CandidateController(ICandidateDocsRepository candidateDocsRepository,IDocumentTypeRepository documentTypeRepository){
+    private readonly IJobOpeningRepository jobOpeningRepository;
+    private readonly IJobCandidateRepository jobCandidateRepository;
+
+
+    public CandidateController(ICandidateDocsRepository candidateDocsRepository,IDocumentTypeRepository documentTypeRepository,
+                                IJobOpeningRepository jobOpeningRepository,IJobCandidateRepository jobCandidateRepository){
         this.candidateDocsRepository = candidateDocsRepository;
         this.documentTypeRepository = documentTypeRepository;
+        this.jobOpeningRepository = jobOpeningRepository;
+        this.jobCandidateRepository = jobCandidateRepository;
     }
 
+
+
+//====================================================Create===================================================
+    [Authorize(Roles ="Candidate")]
     [HttpPost("upload-docs")]
     public async Task<ActionResult<AddedCandidateDocsDto>> AddCandidateDocs(NewCandidateDocsDto newCandidateDocsDto){
         try{
@@ -35,10 +48,81 @@ public class CandidateController : ControllerBase
                     documentName = doctype.documentType,
                     link = candidateDoc.documentLink
                 });
-                Console.WriteLine("======================================================\n+++++++++++++++++++++++++++++++++++++\nDocument added is : "+doctype.documentType);
             }
             updatedCandidate.AddedDocsModelToDto(documentDetlails);
             return Ok();
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
+
+//Job Candidates(Applying for job)
+    [HttpPost("job-opening/{jobOpeningId:int}/apply")]
+    [Authorize(Roles ="Candidate")]
+    public async Task<ActionResult<AfterUpdateJobCandidateDto>> AddJobCandidate(int jobOpeningId){
+        try{
+            
+            
+            var candidateId = User.FindFirst("id")?.Value;
+            if(candidateId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Candidate id not found in the token.");
+            }
+
+            var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
+            if(jobOpening == null){
+                return NotFound($"Job opening with id: {jobOpeningId} not found");
+            }
+
+            if(await jobCandidateRepository.GetJobCandidateByjobOpeningIdAndcanidateId(jobOpeningId,candidateId) != null){
+                return StatusCode(StatusCodes.Status208AlreadyReported,"Already applied for this job");
+            }
+
+            var jobCandiate = await jobOpeningRepository.AddJobCandidateByCandidate(jobOpeningId,candidateId);           
+             
+             return jobCandiate.ModelToUpdatedJobCandidateDto();
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
+
+//============================================Read=========================================================
+
+// See all the job openings
+    [HttpGet("job-openings")]
+    [Authorize(Roles ="Candidate")]
+    public async Task<ActionResult> GetJobOpenings(){
+        try{
+            var candidateId = User.FindFirst("id")?.Value;
+            if(candidateId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Candidate id not found in the token.");
+            }
+            var jobOpenings =  await jobOpeningRepository.GetJobOpenings();
+            if(jobOpenings == null){
+                return NotFound();
+            }
+            return Ok(jobOpenings.Select(jo=> jo.ModelToAddedJobOpeningDto()));
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
+
+//See applied jobs
+    [HttpGet("job-openings/applied-jobs")]
+    [Authorize(Roles ="Candidate")]
+    public async Task<ActionResult> GetAppliedJobs(){
+        try{
+            var candidateId = User.FindFirst("id")?.Value;
+            if(candidateId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Candidate id not found in the token.");
+            }
+            var jobOpenings =  await jobOpeningRepository.GetCandidateJobOpenings(candidateId);
+            if(jobOpenings == null){
+                return NotFound();
+            }
+            return Ok(jobOpenings.Select(jo=> jo.ModelToAddedJobOpeningDto()));
         }
         catch(Exception e){
             return StatusCode(StatusCodes.Status500InternalServerError,e);

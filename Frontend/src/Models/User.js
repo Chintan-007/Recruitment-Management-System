@@ -1,7 +1,10 @@
 export let UserProfileToken = {
-    username,email,token
+    username:'',
+    email:'',
+    token:''
 };
 
 export let UserProfile = {
-    username,email
+    username:'',
+    email:''
 }

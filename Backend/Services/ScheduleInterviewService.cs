@@ -16,13 +16,8 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         this.jobCandidateRepository = jobCandidateRepository;
     }
 
-    public async Task<ScheduledInterview> AddScheduledInterview(NewScheduledInterviewDto scheduledInterviewDto)
+    public async Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto)
     {
-        //Validation of Job Canidate Id
-        var jobCandidate =  await jobCandidateRepository.GetJobCandidateById(scheduledInterviewDto.jobCandidateId);
-        if(jobCandidate == null){
-            throw new Exception("Job Canidatie not found...!");
-        }
         if(!jobCandidate.isFiltered){
             throw new Exception("Job Canidatie is not filtered for this job...!");
         }
@@ -40,7 +35,7 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
 
         var scheduledInterview = new ScheduledInterview{
             interviewDate = scheduledInterviewDto.interviewDate,
-            jobCandidateId = scheduledInterviewDto.jobCandidateId,
+            jobCandidateId = jobCandidate.id,
             jobOpeningId = jobCandidate.jobOpeningId,
             candidateId = jobCandidate.candidateId,
             jobCandidate = jobCandidate,
@@ -64,14 +59,14 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         return result.Entity;
     }
 
-    public async Task<ScheduledInterview> UpdateScheduledInterview(int scheduledInterviewId,UpdateScheduledInterviewDto scheduledInterviewDto)
+    public async Task<ScheduledInterview> UpdateScheduledInterview(int jobCandidateId,UpdateScheduledInterviewDto scheduledInterviewDto)
     {
-        var existingScheduledInterview = await applicationContext.ScheduledInterviews.Include(es=>es.roundHandlers).Include(es=>es.interviewType).Include(es=>es.jobCandidate).FirstOrDefaultAsync(si => si.scheduledInterviewId == scheduledInterviewId);
+        var existingScheduledInterview = await applicationContext.ScheduledInterviews.Include(es=>es.roundHandlers).Include(es=>es.interviewType).Include(es=>es.jobCandidate).FirstOrDefaultAsync(si => si.jobCandidateId == jobCandidateId);
         if(existingScheduledInterview == null || existingScheduledInterview.isCleared){
             throw new Exception("Either the interview has been cleared or it doesn't exists");
         }
 
-        //Validating interviewType
+        // Validating interviewType
         // var interviewType = await applicationContext.InterviewTypes.FindAsync(scheduledInterviewDto.interviewTypeId);
         // if(interviewType == null){
         //     throw new Exception("Interview type not found...!");

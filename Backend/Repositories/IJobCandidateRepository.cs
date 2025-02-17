@@ -11,6 +11,8 @@ public interface IJobCandidateRepository
     // public Task<JobOpening> CreateJobOpening(CreateJobOpeningDto createJobOpeningDto);
     // Read
     public Task<JobCandidate> GetJobCandidateById(int id);
+    Task<JobCandidate> GetJobCandidateByjobOpeningIdAndcanidateId(int jobOpeningId, string candidateId);
+
     // public Task<IEnumerable<JobOpening>> GetJobOpenings();
     // public Task<JobOpening> GetJobOpeningByName(string name);
 

@@ -22,7 +22,7 @@ public static class JopOpeningMapper{
             };
       
     }
-
+    
     public static GetJobOpeningDto ModelToGetJobOpeningDto(this JobOpening jobOpeningModel){
         return new GetJobOpeningDto{
             jobName = jobOpeningModel.jobName,

@@ -33,9 +33,6 @@ public class CreateJobOpeningDto
     [Required]
     public int positionId{get;set;}
     
-
-    [Required]
-    public string organisationId{get;set;} = string.Empty;
     
     [Required]
     public int jobTypeId{get;set;}

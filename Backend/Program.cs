@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -95,7 +96,9 @@ builder.Services.AddAuthentication(opt=>{
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey( System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:Signingkey"]))
+        IssuerSigningKey = new SymmetricSecurityKey( System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:Signingkey"])),
+        // RoleClaimType = ClaimTypes.Role,  // Ensure roles are validated as "role" claims
+        // NameClaimType = ClaimTypes.Name 
     };
 });
 

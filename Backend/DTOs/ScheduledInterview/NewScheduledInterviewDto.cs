@@ -4,8 +4,8 @@ namespace RecruitmentManagement.DTOs.JobCandidates;
 
 public class NewScheduledInterviewDto
 {
-    [Required]
-    public int jobCandidateId{get; set;}
+    // [Required]
+    // public int jobCandidateId{get; set;}
 
     [Required]
     public int interviewTypeId{get; set;}

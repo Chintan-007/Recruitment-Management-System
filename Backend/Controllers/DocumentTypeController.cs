@@ -19,6 +19,7 @@ public class DocumentTypeController : ControllerBase
 
     //Create
     [HttpPost]
+    [Authorize(Roles ="Admin")]
     [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<DocumentType>> AddDocumentType(DocumentType documentType){
         try{
@@ -43,6 +44,7 @@ public class DocumentTypeController : ControllerBase
 
     //Read
     [HttpGet]
+    [Authorize(Roles ="Admin,Candidate,Organisation")]
     public async Task<ActionResult> GetDocumentTypes(){
         try{
             return Ok(await documentTypeRepository.GetDocumentTypes());
@@ -52,7 +54,9 @@ public class DocumentTypeController : ControllerBase
         }
     }
 
+    
     [HttpGet("{id:int}")]
+    [Authorize(Roles ="Admin,Candidate,Organisation")]
     public async Task<ActionResult<DocumentType>> GetDocumentTypeById(int id){
         try{
             var result = await documentTypeRepository.GetDocumentTypeById(id);
@@ -69,6 +73,7 @@ public class DocumentTypeController : ControllerBase
 
     //Update
     [HttpPut("{id:int}")]
+    [Authorize(Roles ="Admin")]
     public async Task<ActionResult<DocumentType>> UpdateDocumentById(int id, DocumentType documentType){
         try{
             var result = await documentTypeRepository.GetDocumentTypeById(id);
@@ -85,6 +90,7 @@ public class DocumentTypeController : ControllerBase
 
     //Delete
     [HttpDelete("{id:int}")]
+    [Authorize(Roles ="Admin")]
     public async Task<ActionResult<DocumentType>> DeleteDocumentById(int id){
         try{
             var result = documentTypeRepository.GetDocumentTypeById(id);
