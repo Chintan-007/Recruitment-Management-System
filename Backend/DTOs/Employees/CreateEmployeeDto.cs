@@ -39,5 +39,6 @@ public class CreateEmployeeDto
     public int  positionId{get; set;}
     
     [Required]
+    [Range(0, 200, ErrorMessage = "Years of experience cant'be negative")]
     public int yearsOfExperience{get; set;}
 }

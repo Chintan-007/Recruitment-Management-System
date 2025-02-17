@@ -16,7 +16,7 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         this.jobCandidateRepository = jobCandidateRepository;
     }
 
-    public async Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto)
+    public async Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto,string organisationId)
     {
         if(!jobCandidate.isFiltered){
             throw new Exception("Job Canidatie is not filtered for this job...!");
@@ -47,7 +47,11 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
             if(employee == null){
                 throw new Exception($"Couldn't found the employee with id: {employeeId}");
             }
+            if(!String.Equals(employee.organisationId,organisationId)){
+                throw new Exception($"The employee with id:{employeeId} does not exist in your organisation");
+            }
             scheduledInterview.roundHandlers.Add(new RoundHandler{
+                scheduledInterviewId = scheduledInterview.scheduledInterviewId,
                 scheduledInterviewJobOpeningId =  jobCandidate.jobOpeningId,
                 scheduledInterviewCandidateId = jobCandidate.candidateId,
                 scheduledInterviewInterviewTypeId = scheduledInterviewDto.interviewTypeId,
@@ -74,7 +78,7 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         
         //Validate Date is not before current Date
         if(scheduledInterviewDto.interviewDate < DateTime.Now){
-            throw new Exception("Date Can't be before today's date...!");
+            throw new Exception("Date-Time Can't be before current time...!");
         }
     
 
@@ -86,6 +90,7 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
                 throw new Exception($"Couldn't found the employee with id: {employeeId}");
             }
             updatedRoundHandlers.Add(new RoundHandler{
+                scheduledInterviewId = existingScheduledInterview.scheduledInterviewId,
                 scheduledInterviewJobOpeningId =  existingScheduledInterview.jobCandidateId,
                 scheduledInterviewCandidateId = existingScheduledInterview.candidateId,
                 scheduledInterviewInterviewTypeId = existingScheduledInterview.interviewTypeId,
@@ -127,4 +132,6 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         }
         return roundHandlerList;
     }
+
+    
 }

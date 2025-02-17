@@ -41,46 +41,7 @@ public class AccountController : ControllerBase
     
 
 
-    //Registeration APIs
-    [HttpPost("register-user")]
-    public async Task<ActionResult> register(RegisterUserDto registerUserDto){
-        try{
-            if(!ModelState.IsValid){
-                return BadRequest();
-            }
-            
-            var appUser = new Users{
-                firstName = registerUserDto.firstname,
-                lastName = registerUserDto.lastname,
-                UserName = registerUserDto.username,
-                Email = registerUserDto.email,
-                PhoneNumber = registerUserDto.mobile,
-                age = registerUserDto.age,
-            };
-
-            var createdUser = await userManager.CreateAsync(appUser,registerUserDto.password);
-
-            if(createdUser.Succeeded){
-                var roleResult = await userManager.AddToRoleAsync(appUser,"Admin");
-                if(roleResult.Succeeded)
-                    return Ok(
-                        new CreatedUserDto{
-                            name = appUser.UserName,
-                            email = appUser.Email,
-                            token = await tokenService.CreateToken(appUser)
-                        }
-                    );
-                else
-                    return StatusCode(500,roleResult.Errors);
-            }
-            else{
-                return StatusCode(500,createdUser.Errors);
-            }
-        }
-        catch(Exception){
-            return StatusCode(StatusCodes.Status500InternalServerError,"Could not register...!");
-        }
-    }
+    
 
     [HttpPost("register-organisation")]
     public async Task<ActionResult> RegisterOrganisation(CreateOrganisationDto createOrganisationDto){
@@ -202,9 +163,49 @@ public class AccountController : ControllerBase
         
     }
 
+    //Registeration APIs
+    [HttpPost("register-admin")]
+    public async Task<ActionResult> register(RegisterUserDto registerUserDto){
+        try{
+            if(!ModelState.IsValid){
+                return BadRequest();
+            }
+            
+            var appUser = new Users{
+                firstName = registerUserDto.firstname,
+                lastName = registerUserDto.lastname,
+                UserName = registerUserDto.username,
+                Email = registerUserDto.email,
+                PhoneNumber = registerUserDto.mobile,
+                age = registerUserDto.age,
+            };
+
+            var createdUser = await userManager.CreateAsync(appUser,registerUserDto.password);
+
+            if(createdUser.Succeeded){
+                var roleResult = await userManager.AddToRoleAsync(appUser,"Admin");
+                if(roleResult.Succeeded)
+                    return Ok(
+                        new CreatedUserDto{
+                            name = appUser.UserName,
+                            email = appUser.Email,
+                            token = await tokenService.CreateToken(appUser)
+                        }
+                    );
+                else
+                    return StatusCode(500,roleResult.Errors);
+            }
+            else{
+                return StatusCode(500,createdUser.Errors);
+            }
+        }
+        catch(Exception){
+            return StatusCode(StatusCodes.Status500InternalServerError,"Could not register...!");
+        }
+    }
 
     //Login APIs
-    [HttpPost("login-user")]
+    [HttpPost("login")]
     public async Task<ActionResult> Login(LoignDto loignDto){
         var user = await userManager.Users.FirstOrDefaultAsync(user => user.UserName == loignDto.name);
         

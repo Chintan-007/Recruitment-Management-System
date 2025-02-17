@@ -33,14 +33,6 @@ public class OrganisationController : ControllerBase
     }
 
 
-    // public bool isValidOrganisaitonId(){
-    //     var organisationId = User.FindFirst("id")?.Value;
-    //     if(organisationId == null){
-    //        return false;
-    //     }
-    //     return true;
-    // }
-
 
 //===========================================Create===============================================
     //Job opening
@@ -94,6 +86,8 @@ public class OrganisationController : ControllerBase
         }
     }
 
+
+    //Schedule interview
   [HttpPost("job-candidate/{jobCandidateId:int}/schedule-interview")]
   [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<AddedScheduledInterviewDto>> AddScheduledInterview(int jobCandidateId, NewScheduledInterviewDto scheduledInterviewDto){
@@ -119,7 +113,8 @@ public class OrganisationController : ControllerBase
                 return Forbid("You do not have access to this job opening...!");
             }
 
-            var scheduledInterview = await scheduleInterviewRepository.AddScheduledInterview(jobCandidate,scheduledInterviewDto);
+
+            var scheduledInterview = await scheduleInterviewRepository.AddScheduledInterview(jobCandidate,scheduledInterviewDto,organisationId);
             var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(scheduledInterviewDto.interviewTypeId);
             List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
             return scheduledInterview.ModelToAddedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
@@ -201,7 +196,7 @@ public class OrganisationController : ControllerBase
             if(jobOpening.organisationId != organisationId){
                 return Forbid("You do not have access to this job opening...!");
             }
-            var updatedJobOpening = await jobOpeningRepository.UpdateJobOpeningById(jobOpeningId,updateJobOpeningDto);           
+            var updatedJobOpening = await jobOpeningRepository.UpdateJobOpeningById(jobOpeningId,updateJobOpeningDto,organisationId);           
             return updatedJobOpening.ModelToAddedJobOpeningDto();
         }
         catch(Exception e){
@@ -241,6 +236,8 @@ public class OrganisationController : ControllerBase
         }
     }
 
+
+    //Schedule interview update
     [HttpPut("job-candidate/{jobCandidateId:int}/schedule-interview/update")]
     [Authorize(Roles ="Organisation")]
     public async Task<ActionResult<AfterUpdateScheduleInterviewDto>> UpdateScheduledInterview(int jobCandidateId,UpdateScheduledInterviewDto scheduledInterviewDto){

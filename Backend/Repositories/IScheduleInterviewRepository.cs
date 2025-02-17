@@ -6,14 +6,15 @@ namespace RecruitmentManagement.Repositories;
 public interface    IScheduleInterviewRepository
 {
      //Create
-    Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto);
+    Task<ScheduledInterview> AddScheduledInterview(JobCandidate jobCandidate,NewScheduledInterviewDto scheduledInterviewDto,string organisationId);
     Task<ScheduledInterview> UpdateScheduledInterview(int scheduledInterviewId,UpdateScheduledInterviewDto scheduledInterviewDto);
     Task<InterviewType> GetInterviewTypeById(int interviewTypeId);
     Task<List<string>> GetRounhandlerList(List<string> roundHandlers);
 
+
     //Read
     // Task<IEnumerable<Position>> GetPositions();
-    // Task<Position> GetPositionById(int id);
+    
     // Task<Position> GetPositionByName(string positionName);
 
     // //Update

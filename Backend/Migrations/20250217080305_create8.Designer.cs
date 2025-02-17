@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecruitmentManagement.Models;
 
@@ -11,9 +12,11 @@ using RecruitmentManagement.Models;
 namespace RecruitmentManagement.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250217080305_create8")]
+    partial class create8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -552,9 +555,6 @@ namespace RecruitmentManagement.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("roundHandlerId"));
-
-                    b.Property<int>("scheduledInterviewId")
-                        .HasColumnType("int");
 
                     b.HasKey("employeeId", "scheduledInterviewJobOpeningId", "scheduledInterviewCandidateId", "scheduledInterviewInterviewTypeId");
 

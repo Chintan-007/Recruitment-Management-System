@@ -1,7 +1,8 @@
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using RecruitmentManagement.DTOs.DocumentTypes;
+using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 
@@ -21,19 +22,19 @@ public class DocumentTypeController : ControllerBase
     [HttpPost]
     [Authorize(Roles ="Admin")]
     [Authorize(Roles ="Organisation")]
-    public async Task<ActionResult<DocumentType>> AddDocumentType(DocumentType documentType){
+    public async Task<ActionResult<DocumentType>> AddDocumentType(NewDocTypeDto docTypeDto){
         try{
-            if(documentType == null){
+            if(docTypeDto == null){
                 return BadRequest();
             }
             //check if doctype already exists or not
-            var result = await documentTypeRepository.GetDocumentTypeByDocumentType(documentType.documentType);
+            var result = await documentTypeRepository.GetDocumentTypeByDocumentType(docTypeDto.documentType);
             if(result == null){
-                var createdDocType = await documentTypeRepository.AddDocumentType(documentType);
+                var createdDocType = await documentTypeRepository.AddDocumentType(docTypeDto.DtoToDocTypeModel());
                 return CreatedAtAction(nameof(GetDocumentTypeById),new {id = createdDocType.id},createdDocType);
             }
             else{
-                return StatusCode(StatusCodes.Status208AlreadyReported,$"The doctype: {documentType.documentType} already exists!");
+                return StatusCode(StatusCodes.Status208AlreadyReported,$"The doctype: {docTypeDto.documentType} already exists!");
             }
         }
         catch(Exception){
@@ -47,7 +48,8 @@ public class DocumentTypeController : ControllerBase
     [Authorize(Roles ="Admin,Candidate,Organisation")]
     public async Task<ActionResult> GetDocumentTypes(){
         try{
-            return Ok(await documentTypeRepository.GetDocumentTypes());
+            var docTypes = await documentTypeRepository.GetDocumentTypes();
+            return Ok(docTypes.Select(dc => dc.ModelToGetDocTypeDto()));
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Error Retrieving data from database!!!");
@@ -57,13 +59,13 @@ public class DocumentTypeController : ControllerBase
     
     [HttpGet("{id:int}")]
     [Authorize(Roles ="Admin,Candidate,Organisation")]
-    public async Task<ActionResult<DocumentType>> GetDocumentTypeById(int id){
+    public async Task<ActionResult> GetDocumentTypeById(int id){
         try{
             var result = await documentTypeRepository.GetDocumentTypeById(id);
             if(result == null){
                 return NotFound($"Document type with Id: {id} not found !");
             }
-            return result;
+            return Ok(result.ModelToGetDocTypeDto());
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Error Retrieving data from database");

@@ -44,6 +44,11 @@ public class JobOpeningService : IJobOpeningRepository
             throw new Exception("Invalid JobType Id");
         }
 
+        //Validate Date is not before current Date
+        if(createJobOpeningDto.deadLine < DateTime.Now){
+            throw new Exception("Date Can't be before today's date...!");
+        }
+
 
         //Process for validationg and adding jobSkills
         var jobOpeningModel = createJobOpeningDto.DtoToModel(position,organisation,jobType,jobStatus);
@@ -199,7 +204,7 @@ public async Task<IEnumerable<JobOpening>> GetOrganisationJobOpenings(string org
 
 
 //==============================================Update=====================================================================
-    public async Task<JobOpening> UpdateJobOpeningById(int jobOpeningId, UpdateJobOpeningDto createJobOpeningDto)
+    public async Task<JobOpening> UpdateJobOpeningById(int jobOpeningId, UpdateJobOpeningDto createJobOpeningDto,string organisationId)
     {
         //Validationg all the data respected to their Id's
         var position = await positionRepository.GetPositionById(createJobOpeningDto.positionId);
@@ -207,10 +212,7 @@ public async Task<IEnumerable<JobOpening>> GetOrganisationJobOpenings(string org
             throw new Exception("Position Not Found !");
         }
         
-        var organisation = await organisationRepository.GetOrganisationById(createJobOpeningDto.organisationId);
-        if(organisation == null){
-            throw new Exception("Organisatoin Not Found");
-        }
+        var organisation = await organisationRepository.GetOrganisationById(organisationId);
         
         var jobStatus = await applicationContext.JobStatuses.FindAsync(createJobOpeningDto.jobStatusId);
         if(jobStatus == null){

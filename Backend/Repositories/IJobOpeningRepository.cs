@@ -17,7 +17,7 @@ public interface IJobOpeningRepository
     public Task<JobOpening> GetJobOpeningByName(string name);
 
     // Update
-    public Task<JobOpening> UpdateJobOpeningById(int id, UpdateJobOpeningDto updateJobOpeningDto);
+    public Task<JobOpening> UpdateJobOpeningById(int id, UpdateJobOpeningDto updateJobOpeningDto,string organisationId);
     public Task<JobOpening> AddJobCandidateByOrganisation(int jobOpeningId,NewJobCandidateDto jobCandidateDto);
     Task<JobCandidate> AddJobCandidateByCandidate(int jobOpeningId, string candidateId);
     // public Task<JobOpening> EnableJobOpeningById(int id);

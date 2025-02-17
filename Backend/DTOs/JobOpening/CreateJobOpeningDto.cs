@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using RecruitmentManagement.DTOs.JobSkills;
-using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.DTOs.JobOpening;
 
@@ -17,9 +16,11 @@ public class CreateJobOpeningDto
     public int experienceRequired{get;set;}
     
     [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Salary can't be negative")]
     public double minSalary{get;set;}
     
     [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Salary can't be negative")]
     public double maxSalary{get;set;}
     
     public int requiredCandidates{get;set;}

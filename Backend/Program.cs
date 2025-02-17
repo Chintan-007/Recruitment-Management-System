@@ -61,6 +61,7 @@ builder.Services.AddScoped<IJobOpeningRepository,JobOpeningService>();
 builder.Services.AddScoped<IJobCandidateRepository,JobCandidateService>();
 builder.Services.AddScoped<IScheduleInterviewRepository,ScheduleInterviewService>();
 builder.Services.AddScoped<ICandidateDocsRepository,CandidateDocsService>();
+builder.Services.AddScoped<IInterviewRoundRepository,InterviewRoundService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 
 //-------------------Database Connection--------------------------------------------------
