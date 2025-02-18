@@ -1,92 +1,100 @@
-import React, { createContext, use, useEffect, useState } from "react";
-import { UserProfile } from "../Models/User";
+import React, { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginApi, registerApi } from "../Services/AuthService";
+import { loginApi, registerOrgnisationApi } from "../Services/AuthService";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-let UserContextType = {
-    user:UserProfile | null,
-    token:String|null,
-    registerUser:(email,username,password) => {},
-    loginUser:(username,password)=> {},
-    logOut: ()=>{},
-    isLoggedIn: ()=>{}
-}
+// Create context with default values
+const UserContext = createContext({
+  user: null,
+  token: null,
+  registerOrgnisation: (firstname,lastname,username,addressLine1, addressLine2,orgnaisationType,email, password) => {},
+  loginUser: (username, password) => {},
+  logOut: () => {},
+  isLoggedIn: () => {},
+});
 
-let Props = {children : React.ReactNode};
+export const UserProvider = ({ children }) => {
+  const navigate = useNavigate();
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [isReady, setIsReady] = useState(false);
 
-const UserContext = createContext<UserContextType>({});
-
-export const UserProvider = ({children}) =>{
-
-    const navigate  = useNavigate();
-    const [token,setToken] =  useState<String|null>(null);
-    const [user,setUser] = useState<UserProfile|null>(null);
-    const [isReady,setIsReady] = useState(false);
-
-    useEffect(()=>{
-        const user = localStorage.getItem("user");
-        const token =  localStorage.getItem("token");
-        if(user && token){
-            setUser(JSON.parse(use));
-            setToken(JSON.parse(token));
-            axios.defaults.headers.common["Authorization"] = "Bearer"+token;
-        }
-        setIsReady(true);
-    },[]);
-
-    const registerUser = async(email,username,password)=>{
-        await registerApi(email,username,password).then((res)=>{
-            if(res){
-                localStorage.setItem("token",res?.data.token);
-                const userObj = {
-                    username:res?.data.username,
-                    email:res?.data.email,
-                }
-                localStorage.setItem("user",JSON.stringify(userObj));
-                setToken(res?.data.token)
-                setUser(userObj)
-                toast.success("Login sucessfull!");
-                navigate("/search");
-            }
-        }).catch(e=>toast.warning("Server error occured"));
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
+    if (storedUser && storedToken) {
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
+      axios.defaults.headers.common["Authorization"] = "Bearer " + storedToken;
     }
+    setIsReady(true);
+  }, []);
 
-    const loginUser = async(username,password)=>{
-        await loginApi(username,password).then((res)=>{
-            if(res){
-                localStorage.setItem("token",res?.data.token);
-                const userObj = {
-                    username:res?.data.username,
-                    email:res?.data.email,
-                }
-                localStorage.setItem("user",JSON.stringify(userObj));
-                setToken(res?.data.token)
-                setUser(userObj)
-                toast.success("Login sucessfull!");
-                navigate("/search");
-            }
-        }).catch(e=>toast.warning("Server error occured"));
+  const registerOrganisation = async (firstname,lastname,username,email,contact,addressLine1,addressLine2,about,password,organisationTypeId) => {
+    try {
+      const res = await registerOrgnisationApi(firstname,lastname,username,email,contact,addressLine1,addressLine2,about,password,organisationTypeId);
+      if (res?.data?.token) {
+        localStorage.setItem("token", res?.data.token);
+        const userObj = {
+          username: res?.data.username,
+          email: res?.data.email,
+        };
+        localStorage.setItem("user", JSON.stringify(userObj));
+        setToken(res?.data.token);
+        setUser(userObj);
+        toast.success("Registration successful!");
+        navigate(`/organisation-dashboard/${organisationTypeId}`);
+      }
+    } catch (e) {
+      toast.warning("Server error occurred");
     }
+  };
 
-    const isLoggedIn = ()=>{
-        return !!user;
+  const loginUser = async (username, password) => {
+    try {
+      const res = await loginApi(username, password);
+      if (res?.data?.token) {
+        localStorage.setItem("token", res?.data.token);
+        const userObj = {
+          username: res?.data.username,
+          email: res?.data.email,
+        };
+        localStorage.setItem("user", JSON.stringify(userObj));
+        setToken(res?.data.token);
+        setUser(userObj);
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      }
+    } catch (e) {
+      toast.warning("Server error occurred");
     }
+  };
 
-    const logout = ()=>{
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setUser(null);
-        setToken("");
-        navigate("/");
-    }
+  const isLoggedIn = () => {
+    return !!user;
+  };
 
-    return(
-        <UserContext.Provider value = {{loginUser,user,token,logout,isLoggedIn, registerUser}}>
-            {isReady ? children:null}
-        </UserContext.Provider>
-    )
-}
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setToken(null);
+    navigate("/");
+  };
 
-export const useAuth = () => React.useContext(UserContext);
+  return (
+    <UserContext.Provider value={{ loginUser, user, token, logout, isLoggedIn, registerOrganisation }}>
+      {isReady ? children : null}
+    </UserContext.Provider>
+  );
+};
+
+// Custom hook for consuming the UserContext
+export const useAuth = () => {
+  const context = React.useContext(UserContext);
+  if (!context) {
+    throw new Error("useAuth must be used within a UserProvider");
+  }
+  return context;
+};

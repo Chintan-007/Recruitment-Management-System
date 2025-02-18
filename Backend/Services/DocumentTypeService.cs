@@ -13,6 +13,7 @@ public class DocumentTypeService : IDocumentTypeRepository
         this.applicationContext = applicationContext;
     }
 
+
     //Create
     public async Task<DocumentType> AddDocumentType(DocumentType documentType)
     {
@@ -27,6 +28,15 @@ public class DocumentTypeService : IDocumentTypeRepository
     {
         return await applicationContext.DocumentTypes.ToListAsync();
     }
+
+
+    public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
+    {
+        return await applicationContext.OrganisationTypes.ToListAsync();
+    }
+    
+    
+    
     public async Task<DocumentType> GetDocumentTypeById(int id)
     {
         return await applicationContext.DocumentTypes.FindAsync(id);
@@ -65,4 +75,5 @@ public class DocumentTypeService : IDocumentTypeRepository
 
         return null;
     }
+
 }

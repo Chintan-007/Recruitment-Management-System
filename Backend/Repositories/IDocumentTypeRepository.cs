@@ -6,6 +6,7 @@ namespace RecruitmentManagement.Repositories;
 public interface IDocumentTypeRepository
 {
     Task<IEnumerable<DocumentType>> GetDocumentTypes();
+    Task<IEnumerable<OrganisationType>> GetOrganisationTypes();
 
     Task<DocumentType> GetDocumentTypeById(int id);
 

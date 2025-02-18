@@ -1,3 +1,4 @@
+using RecruitmentManagement.DTOs.Positions;
 using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.Repositories;
@@ -13,7 +14,7 @@ public interface IPositionRepository
     Task<Position> GetPositionByName(string positionName);
 
     //Update
-    Task<Position> UpdatePositionById(int id, Position position);
+    Task<Position> UpdatePositionById(int id, NewPositionDto position);
 
     //Delete
     Task<Position> DeletePositionById(int id);

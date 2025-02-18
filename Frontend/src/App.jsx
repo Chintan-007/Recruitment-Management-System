@@ -10,11 +10,11 @@ function App() {
 
   return (
     <>
-      {/* <UserProvider>
+      <UserProvider>
+        <Navbar/>
+        <Outlet/>
         <ToastContainer/>
-      </UserProvider> */}
-      <Navbar/>
-      <Outlet/>
+      </UserProvider> 
     </>
   )
 }

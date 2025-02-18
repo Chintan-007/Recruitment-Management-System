@@ -9,6 +9,6 @@ public class AddFeedBackDto
 
     [Required]
     public int rating{get;set;}
-
+    public bool isCompleted{get;set;} = false;
 
 }

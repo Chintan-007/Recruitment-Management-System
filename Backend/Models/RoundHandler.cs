@@ -19,4 +19,6 @@ public class RoundHandler
 
     public int rating{get;set;}
     public string feedback{get;set;} = string.Empty;
+
+    public bool isCompleted{get;set;} = false;
 }

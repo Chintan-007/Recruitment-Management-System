@@ -25,6 +25,15 @@ public static class JobCandidateMapper{
             };  
     }
 
+    public static CandidateInfoDto ModelToGetCanidateForOrganisation(this JobCandidate jobCandidateModel){
+            return new CandidateInfoDto{
+                candidateId = jobCandidateModel.candidateId,
+                candidateUserName = jobCandidateModel.candidate.UserName,
+                interviewRounds = jobCandidateModel.noOfInterviewRounds,
+                isFiltered = jobCandidateModel.isFiltered,
+                isSelected = jobCandidateModel.isSelected
+            };  
+    }
     public static AfterUpdateJobCandidateDto ModelToUpdatedJobCandidateDto(this JobCandidate jobCandidateModel){
             return new AfterUpdateJobCandidateDto{
                 candidateId = jobCandidateModel.candidateId,

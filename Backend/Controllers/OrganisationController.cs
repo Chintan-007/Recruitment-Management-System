@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using RecruitmentManagement.DTOs.CandidateDocs;
 using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
 using RecruitmentManagement.DTOs.Organisations;
@@ -21,14 +23,17 @@ public class OrganisationController : ControllerBase
     private readonly IJobOpeningRepository jobOpeningRepository;
     private readonly IJobCandidateRepository jobCandidateRepository;
     private readonly IScheduleInterviewRepository scheduleInterviewRepository;
+     private readonly ICandidateDocsRepository candidateDocsRepository;
 
 
     public OrganisationController(IOrganisationRepository organisationRepository,IJobOpeningRepository jobOpeningRepository,
-                                IJobCandidateRepository jobCandidateRepository,IScheduleInterviewRepository scheduleInterviewRepository){
+                                IJobCandidateRepository jobCandidateRepository,IScheduleInterviewRepository scheduleInterviewRepository,
+                                ICandidateDocsRepository candidateDocsRepository){
         this.jobOpeningRepository = jobOpeningRepository;
         this.organisationRepository = organisationRepository;
         this.jobCandidateRepository = jobCandidateRepository;
         this.scheduleInterviewRepository = scheduleInterviewRepository;
+        this.candidateDocsRepository = candidateDocsRepository;
 
     }
 
@@ -172,7 +177,79 @@ public class OrganisationController : ControllerBase
         }
     }
 
+    [HttpGet("job-opening/{jobOpeningId:int}/candidates")]
+    [Authorize(Roles ="Organisation")]
+    public async Task<ActionResult> GetJobCandidates(int jobOpeningId){
+        try{
+            var organisationId = User.FindFirst("id")?.Value;
+            if(organisationId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Organisatoin id not found in the token.");
+            }
+            var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
+            if(jobOpening == null){
+                return NotFound();
+            }
 
+            if(jobOpening.organisationId != organisationId){
+                return Forbid("You do not have access to this job opening...!");
+            }
+
+            var jobCandidates =  await jobCandidateRepository.GetJobCanidatesByJobOpeningId(jobOpeningId);
+
+            List<CandidateInfoDto> candidates = new List<CandidateInfoDto>();
+            foreach(var jobCand in jobCandidates){
+                if(jobCand != null)
+                candidates.Add(jobCand.ModelToGetCanidateForOrganisation());
+            }
+            return Ok(candidates);
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
+
+    [HttpGet("job-opening/{jobOpeningId:int}/candidate/{candidateId}/documents")]
+    [Authorize(Roles ="Organisation")]
+    public async Task<ActionResult> GetJobCandidatesDocs(int jobOpeningId,string candidateId){
+        try{
+            var organisationId = User.FindFirst("id")?.Value;
+            if(organisationId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Organisatoin id not found in the token.");
+            }
+            var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
+            if(jobOpening == null){
+                return NotFound();
+            }
+
+            if(jobOpening.organisationId != organisationId){
+                return Forbid("You do not have access to this job opening...!");
+            }
+
+            var jobCandidates =  await jobCandidateRepository.GetJobCanidatesByJobOpeningId(jobOpeningId);
+
+            var candidate = jobCandidates.Select(jc=>String.Equals(jc.candidateId,candidateId));
+            if(candidate == null){
+                return NotFound($"The candidate with id :{candidateId} not found in your job opening");
+            }    
+
+
+            var docs = await candidateDocsRepository.GetCandidateDocsByCandidateId(candidateId);
+
+            List<DocumentData> documentDatas = new List<DocumentData>();
+            //Need to be moved to mappers
+            foreach(var doc in docs){
+                documentDatas.Add(new DocumentData{
+                     documentTypeId = doc.documentTypeId,
+                     documentLink = doc.documentLink
+                });
+            }
+        
+            return Ok(documentDatas);
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
 
     //==========================================================Update======================================================= 
     [HttpPut("job-opening/{jobOpeningId:int}/update")]
@@ -251,6 +328,10 @@ public class OrganisationController : ControllerBase
             }
 
             var jobCandidate = await jobCandidateRepository.GetJobCandidateById(jobCandidateId);
+            if(jobCandidate == null){
+                return NotFound("Job Candidate not found");
+            }
+
             var jobOpeningId = jobCandidate.jobOpeningId;
 
             var jobOpening =  await jobOpeningRepository.GetJobOpeningById(jobOpeningId);
@@ -261,9 +342,14 @@ public class OrganisationController : ControllerBase
             if(jobOpening.organisationId != organisationId){
                 return Forbid("You do not have access to this job opening...!");
             }
+
             var updatedScheduledInterview = await scheduleInterviewRepository.UpdateScheduledInterview(jobCandidateId,scheduledInterviewDto);
             var interviewType = await scheduleInterviewRepository.GetInterviewTypeById(updatedScheduledInterview.interviewTypeId);
             List<string> roundHandlers = await scheduleInterviewRepository.GetRounhandlerList(scheduledInterviewDto.roundHandlersIds);
+            var unClearedInterview = await scheduleInterviewRepository.GetUnclearedInterviewByJobCandidateId(jobCandidateId);
+            if(unClearedInterview == null){
+                await jobOpeningRepository.MarkCandidateSelected(jobCandidate);
+            }
             return updatedScheduledInterview.ModelToUpdatedScheduldeInterviewDto(interviewType.interviewType,roundHandlers);
         }
         catch(Exception e){
@@ -296,80 +382,5 @@ public class OrganisationController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError,e);
         }
     }
-
-    //Create
-    // [HttpPost]
-    // public async Task<ActionResult<OrganisationDTO>> AddOrganisation(CreateOrganisationDto organisationDto)
-    // {
-    //     try
-    //     {
-    //         if (organisationDto == null)
-    //         {
-    //             return BadRequest();
-    //         }
-
-    //         //Checking for duplicate names
-    //         var result = await organisationRepository.GetOrganisatoinByName(organisationDto.organisationName);
-    //         if (result == null)
-    //         {
-    //             var createdOrganisation = await organisationRepository.AddOrganisation(organisationDto.OrganisationDtoToModel());
-    //             // return CreatedAtAction(nameof(GetOrganisationById),new{id = createdOrganisation.id},createdOrganisation);
-    //             return createdOrganisation.OrganisationModelToDto();
-    //         }
-    //         else
-    //         {
-    //             return StatusCode(StatusCodes.Status208AlreadyReported, $"The Organisation with name '{organisationDto.organisationName}' already exists...!");
-    //         }
-    //     }
-    //     catch (Exception)
-    //     {
-    //         return StatusCode(StatusCodes.Status500InternalServerError, $"Could not add the organisation.");
-    //     }
-    // }
-
-    //Read
-    // [HttpGet]
-    // [Authorize]
-    // public async Task<ActionResult> GetOrganisations()
-    // {
-    //     try
-    //     {
-    //         var organisations = await organisationRepository.GetOrganisations();
-    //         if (organisations == null)
-    //         {
-    //             return StatusCode(StatusCodes.Status204NoContent, "There are no organisations listed...!");
-    //         }
-    //         var organisationDtos = organisations.Select(org => org.OrganisationModelToDto());
-    //         return Ok(organisationDtos);
-    //     }
-    //     catch (Exception)
-    //     {
-    //         return StatusCode(StatusCodes.Status500InternalServerError, "Error Reterieving data from database");
-    //     }
-    // }
-
-    // [HttpGet("{id}")]
-    // public async Task<ActionResult<RegisteredOrganisationDto>> GetOrganisationById(string id)
-    // {
-    //     try
-    //     {
-    //         var result = await organisationRepository.GetOrganisationById(id);
-    //         if (result == null)
-    //         {
-    //             return NotFound($"Organisation with Id: {id} not found !");
-    //         }
-    //         return result.OrganisationModelToDto();
-    //     }
-    //     catch (Exception)
-    //     {
-    //         return StatusCode(StatusCodes.Status500InternalServerError, "Error Reterieving data from database");
-    //     }
-    // }
-
-    //Update
-
-
-
-    //Delete
 
 }

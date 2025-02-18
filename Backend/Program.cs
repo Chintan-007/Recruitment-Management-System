@@ -13,6 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend",
+            builder => builder.WithOrigins("http://localhost:5173") // Frontend URL
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+    });
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(option =>
@@ -119,6 +126,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
+ app.UseCors("AllowFrontend"); // Apply the policy
 
 app.UseRouting();
 

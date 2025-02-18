@@ -11,7 +11,8 @@ public interface ICandidateDocsRepository
 
     //Read
     Task<ActionResult> GetCandidateDocs();
-    Task<ActionResult<CandidateDocs>> GetCandidateDocsById(int candidateDoccId);
+   Task<IEnumerable<CandidateDocs>> GetCandidateDocsByCandidateId(string candidateId);
+    Task<CandidateDocs> GetCandidateDocByCandidateIdandDocId(string candidateId, int documentTypeId);
 
     //Update
     Task<ActionResult<CandidateDocs>> UpdateCandidateDocsById(int candidateDocsId, CandidateDocs candidateDocs);

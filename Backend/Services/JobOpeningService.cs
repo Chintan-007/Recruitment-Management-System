@@ -279,5 +279,13 @@ public async Task<IEnumerable<JobOpening>> GetOrganisationJobOpenings(string org
         return result;
     }
 
-    
+
+
+//=============================================Additional Tasks=========================================================
+
+    public async Task MarkCandidateSelected(JobCandidate jobCandidate)
+    {
+        jobCandidate.isSelected = true;
+        await applicationContext.SaveChangesAsync();
+    }
 }

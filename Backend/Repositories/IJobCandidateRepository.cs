@@ -12,6 +12,8 @@ public interface IJobCandidateRepository
     // Read
     public Task<JobCandidate> GetJobCandidateById(int id);
     Task<JobCandidate> GetJobCandidateByjobOpeningIdAndcanidateId(int jobOpeningId, string candidateId);
+    Task<IEnumerable<JobCandidate>> GetJobCanidatesByJobOpeningId(int organisationId);
+    Task<JobCandidate> GetSelectedJobCandidateByCandidateId(string candidateId);
 
     // public Task<IEnumerable<JobOpening>> GetJobOpenings();
     // public Task<JobOpening> GetJobOpeningByName(string name);

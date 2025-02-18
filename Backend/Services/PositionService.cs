@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RecruitmentManagement.DTOs.Positions;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 
@@ -40,7 +41,7 @@ public class PositionService : IPositionRepository{
 
 
     //Update
-    public async Task<Position> UpdatePositionById(int id, Position position)
+    public async Task<Position> UpdatePositionById(int id, NewPositionDto position)
     {
         var result = await GetPositionById(id);
         if(result != null){

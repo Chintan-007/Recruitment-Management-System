@@ -27,6 +27,7 @@ public class InterviewRoundService : IInterviewRoundRepository
     {
         interviewRound.rating = addFeedBackDto.rating;
         interviewRound.feedback = addFeedBackDto.feedback;
+        interviewRound.isCompleted = addFeedBackDto.isCompleted;
 
         await applicationContext.SaveChangesAsync();
 
@@ -41,5 +42,14 @@ public class InterviewRoundService : IInterviewRoundRepository
     public async Task<Candidate> GetCandidateById(string candidateId)
     {
         return await applicationContext.Candidates.FindAsync(candidateId);
+    }
+
+    public async Task<IEnumerable<RoundHandler>> GetInterviewRoundByEmployeeId(string employeeId)
+    {
+        var result = await applicationContext.RoundHandlers
+                            .Include(rh=>rh.employee)
+                            .Include(rh=>rh.scheduledInterview)
+                            .Where(rh=>String.Equals(rh.employeeId,employeeId)).ToListAsync();
+        return result;
     }
 }

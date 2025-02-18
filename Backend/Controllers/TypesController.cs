@@ -10,19 +10,18 @@ namespace RecruitmentManagement.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class DocumentTypeController : ControllerBase 
+public class TypeController : ControllerBase 
 {
     private readonly IDocumentTypeRepository documentTypeRepository;
-    public DocumentTypeController(IDocumentTypeRepository documentTypeRepository){
+    public TypeController(IDocumentTypeRepository documentTypeRepository){
         this.documentTypeRepository = documentTypeRepository;
     }
 
 
     //Create
-    [HttpPost]
+    [HttpPost("document-type")]
     [Authorize(Roles ="Admin")]
-    [Authorize(Roles ="Organisation")]
-    public async Task<ActionResult<DocumentType>> AddDocumentType(NewDocTypeDto docTypeDto){
+    public async Task<ActionResult<GetDocTypeDto>> AddDocumentType(NewDocTypeDto docTypeDto){
         try{
             if(docTypeDto == null){
                 return BadRequest();
@@ -44,7 +43,7 @@ public class DocumentTypeController : ControllerBase
 
 
     //Read
-    [HttpGet]
+    [HttpGet("document-types")]
     [Authorize(Roles ="Admin,Candidate,Organisation")]
     public async Task<ActionResult> GetDocumentTypes(){
         try{
@@ -57,8 +56,7 @@ public class DocumentTypeController : ControllerBase
     }
 
     
-    [HttpGet("{id:int}")]
-    [Authorize(Roles ="Admin,Candidate,Organisation")]
+    [HttpGet("doucument-type/{id:int}")]
     public async Task<ActionResult> GetDocumentTypeById(int id){
         try{
             var result = await documentTypeRepository.GetDocumentTypeById(id);
@@ -72,17 +70,29 @@ public class DocumentTypeController : ControllerBase
         }
     }
 
+    [HttpGet("organisation-types")]
+    public async Task<ActionResult> GetOrganisationTypes(){
+        try{
+            var orgTypes = await documentTypeRepository.GetOrganisationTypes();
+            return Ok(orgTypes.Select(ot => ot.ModelToGetOrgTypeDto()));
+        }
+        catch(Exception){
+            return StatusCode(StatusCodes.Status500InternalServerError,"Error Retrieving data from database!!!");
+        }
+    }
+
 
     //Update
-    [HttpPut("{id:int}")]
+    [HttpPut("document-type/{id:int}")]
     [Authorize(Roles ="Admin")]
-    public async Task<ActionResult<DocumentType>> UpdateDocumentById(int id, DocumentType documentType){
+    public async Task<ActionResult<GetDocTypeDto>> UpdateDocumentById(int id, DocumentType documentType){
         try{
             var result = await documentTypeRepository.GetDocumentTypeById(id);
             if(result == null){
                 return NotFound($"Document type with Id: {id} not found !");
             }
-            return await documentTypeRepository.UpdateDocumentTypeById(id,documentType);
+            var docType = await documentTypeRepository.UpdateDocumentTypeById(id,documentType);
+            return docType.ModelToGetDocTypeDto();
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't update the document type...!");
@@ -91,15 +101,16 @@ public class DocumentTypeController : ControllerBase
 
 
     //Delete
-    [HttpDelete("{id:int}")]
+    [HttpDelete("document-type/{id:int}")]
     [Authorize(Roles ="Admin")]
-    public async Task<ActionResult<DocumentType>> DeleteDocumentById(int id){
+    public async Task<ActionResult<GetDocTypeDto>> DeleteDocumentById(int id){
         try{
             var result = documentTypeRepository.GetDocumentTypeById(id);
             if(result == null){
                 return NotFound($"Document type with id: {id} not found.");
             }
-            return await documentTypeRepository.DeleteDocumentTypeById(id);
+            var deletedDocType = await documentTypeRepository.DeleteDocumentTypeById(id);
+            return deletedDocType.ModelToGetDocTypeDto();
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Couldn't delete the document type...!");

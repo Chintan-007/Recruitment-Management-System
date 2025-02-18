@@ -24,4 +24,5 @@ public interface IJobOpeningRepository
 
     // Delete
     public Task<JobOpening> DeleteJobOpeningById(int id);
+    Task MarkCandidateSelected(JobCandidate jobCandidate);
 }

@@ -1,10 +1,11 @@
-/* @import "tailwindcss"; */
+@import "tailwindcss";
 
 #root {
   /* max-width: 95vw; */
-  margin: 0 auto;
-  padding: 0.3rem;
-  text-align: center;
+  /* margin: 0 auto; */
+  /* padding: 0.3rem; */
+  /* text-align: center; */
+  background-color: #f5f5f5;
 }
 
 

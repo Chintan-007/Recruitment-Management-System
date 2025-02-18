@@ -11,4 +11,5 @@ public interface IInterviewRoundRepository
 
     public Task<Employee> GetInterviewerById(string employeeId);
     public Task<Candidate> GetCandidateById(string candidateId);
+    Task<IEnumerable<RoundHandler>> GetInterviewRoundByEmployeeId(string employeeId);
 }

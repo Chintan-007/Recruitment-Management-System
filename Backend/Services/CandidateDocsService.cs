@@ -50,9 +50,9 @@ public class CandidateDocsService : ICandidateDocsRepository
         throw new NotImplementedException();
     }
 
-    public Task<ActionResult<CandidateDocs>> GetCandidateDocsById(int candidateDoccId)
+    public async Task<IEnumerable<CandidateDocs>> GetCandidateDocsByCandidateId(string candidateId)
     {
-        throw new NotImplementedException();
+        return await applicationContext.candidateDocs.Where(cd=>String.Equals(cd.candidateId,candidateId)).ToListAsync();
     }
 
     public Task<ActionResult<CandidateDocs>> UpdateCandidateDocsById(int candidateDocsId, CandidateDocs candidateDocs)
@@ -64,5 +64,10 @@ public class CandidateDocsService : ICandidateDocsRepository
      public Task<ActionResult> DeleteCandidateDocsById(int candidateDocsId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<CandidateDocs> GetCandidateDocByCandidateIdandDocId(string candidateId, int documentTypeId)
+    {
+        return await applicationContext.candidateDocs.FirstOrDefaultAsync(cd => String.Equals(cd.candidateId,candidateId) && cd.documentTypeId==documentTypeId);
     }
 }

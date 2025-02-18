@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.DTOs.JobOpening;
 using RecruitmentManagement.Mappers;
@@ -10,13 +11,9 @@ namespace RecruitmentManagement.Service;
 public class JobCandidateService : IJobCandidateRepository
 {
     private readonly ApplicationContext applicationContext;
-    // private readonly IPositionRepository positionRepository;
-    // private readonly IOrganisationRepository organisationRepository;
 
     public JobCandidateService(ApplicationContext applicationContext, IPositionRepository positionRepository, IOrganisationRepository organisationRepository){
         this.applicationContext = applicationContext;
-        // this.positionRepository = positionRepository;
-        // this.organisationRepository = organisationRepository;
     }   
 
     public async Task<JobCandidate> GetJobCandidateById(int jobCandidateId)
@@ -31,6 +28,16 @@ public class JobCandidateService : IJobCandidateRepository
     {
         var result = await applicationContext.JobCandidates.Include(jc=>jc.jobOpening).FirstOrDefaultAsync(jc => jc.jobOpeningId == jobOpeningId && jc.candidateId == candidateId);
         return result;
+    }
+
+    public async Task<IEnumerable<JobCandidate>> GetJobCanidatesByJobOpeningId(int jobOpeningId)
+    {
+        return await applicationContext.JobCandidates.Include(jc=>jc.candidate).Where(jc=>jc.jobOpeningId == jobOpeningId).ToListAsync();
+    }
+
+    public async Task<JobCandidate> GetSelectedJobCandidateByCandidateId(string candidateId)
+    {
+        return await applicationContext.JobCandidates.FirstOrDefaultAsync(jc=>String.Equals(jc.candidateId,candidateId) && jc.isSelected);
     }
 
     public async Task<JobCandidate> UpdateJobCandidateById(int jobCandidateId, UpdateJobCandidateDto jobCandidateDto)

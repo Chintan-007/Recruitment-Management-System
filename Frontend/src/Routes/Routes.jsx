@@ -1,7 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import Home from "../Pages/HomePage/Home";
-import Company from "../Pages/CompanyPage/Company";
 import App from "../App";
+import Login from "../Pages/LoginPage/Login";
+import Register from "../Pages/RegisterPage/Register";
+import OrganisationDashboard from "../Pages/OrganisationPage/OrganisationDashboard";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
     {
@@ -9,7 +12,9 @@ export const router = createBrowserRouter([
         element: <App/>,
         children:[
             { path:"",element:<Home/>},
-            { path:"company/:ticker",element:<Company/>}
+            { path:"login",element:<Login/>},
+            { path:"register",element:<Register/>},
+            { path:"organisation-dashboard/:ticker",element:<ProtectedRoute><OrganisationDashboard/></ProtectedRoute>}
         ]
     }
 ]);

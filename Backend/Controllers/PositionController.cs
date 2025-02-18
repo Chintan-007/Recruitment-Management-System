@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecruitmentManagement.DTOs.Positions;
+using RecruitmentManagement.Mappers;
 using RecruitmentManagement.Models;
 using RecruitmentManagement.Repositories;
 using RecruitmentManagement.Services;
@@ -17,8 +19,8 @@ public class PositionController : ControllerBase{
 
     //Create
     [HttpPost]
-    [Authorize(Roles ="Organisation")]
-    public async Task<ActionResult<Position>> AddPosition(Position position){
+    [Authorize(Roles ="Admin")]
+    public async Task<ActionResult<Position>> AddPosition(NewPositionDto position){
        try{
 
             if(position == null){
@@ -28,7 +30,7 @@ public class PositionController : ControllerBase{
             //Validating that position does not exists
             var result = await positionRepository.GetPositionByName(position.position);
             if(result == null){
-                var createdPosition = await positionRepository.AddPosition(position);
+                var createdPosition = await positionRepository.AddPosition(position.DtoToPositionModel());
                 return CreatedAtAction(nameof(GetPositionById),new {id = createdPosition.id},createdPosition);
             }
             else{
@@ -44,9 +46,10 @@ public class PositionController : ControllerBase{
 
     //Read
     [HttpGet]
-    public async Task<ActionResult> GetPositions(){
+    public async Task<ActionResult<GetPositionDto>> GetPositions(){
         try{
-            return Ok(await positionRepository.GetPositions());
+            var positions = await positionRepository.GetPositions();
+            return Ok(positions.Select(p=>p.ModelToGetPositionDto()).ToList());
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Error Reterieving data from database");
@@ -54,13 +57,13 @@ public class PositionController : ControllerBase{
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Position>> GetPositionById(int id){
+    public async Task<ActionResult<GetPositionDto>> GetPositionById(int id){
         try{
             var result = await positionRepository.GetPositionById(id);
             if(result == null){
                 return NotFound($"Position with id: {id} not found");
             }
-            return result;
+            return result.ModelToGetPositionDto();
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Error Reterieving data from database");
@@ -71,13 +74,14 @@ public class PositionController : ControllerBase{
 
     //Update
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<Position>> UpdatePositionById(int id, Position position){
+    [Authorize(Roles ="Admin")]
+    public async Task<ActionResult<GetPositionDto>> UpdatePositionById(int id, NewPositionDto position){
         try{
             var result = await positionRepository.UpdatePositionById(id,position);
             if(result == null){
                 return NotFound($"Position with id: {id} not found");
             }
-            return result;
+            return result.ModelToGetPositionDto();
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Could not update the position...!");
@@ -87,13 +91,14 @@ public class PositionController : ControllerBase{
 
     //Delete
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<Position>> DeletePositionById(int id){
+    [Authorize(Roles ="Admin")]
+    public async Task<ActionResult<GetPositionDto>> DeletePositionById(int id){
         try{
             var result = await positionRepository.DeletePositionById(id);
             if(result == null){
                 return NotFound($"Position with id: {id} not found");
             }
-            return result;
+            return result.ModelToGetPositionDto();
         }
         catch(Exception){
             return StatusCode(StatusCodes.Status500InternalServerError,"Could not Delete the position...!");

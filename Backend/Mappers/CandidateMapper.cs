@@ -1,6 +1,7 @@
 
 using RecruitmentManagement.DTOs.CandidateDocs;
 using RecruitmentManagement.DTOs.Candidates;
+using RecruitmentManagement.DTOs.JobCandidates;
 using RecruitmentManagement.Models;
 
 namespace RecruitmentManagement.Mappers;

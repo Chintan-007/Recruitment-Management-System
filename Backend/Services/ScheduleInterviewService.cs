@@ -63,6 +63,10 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         return result.Entity;
     }
 
+
+
+
+
     public async Task<ScheduledInterview> UpdateScheduledInterview(int jobCandidateId,UpdateScheduledInterviewDto scheduledInterviewDto)
     {
         var existingScheduledInterview = await applicationContext.ScheduledInterviews.Include(es=>es.roundHandlers).Include(es=>es.interviewType).Include(es=>es.jobCandidate).FirstOrDefaultAsync(si => si.jobCandidateId == jobCandidateId);
@@ -111,6 +115,18 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
     }
 
 
+
+
+    public async Task<ScheduledInterview> GetScheduledInterviewById(int id){
+        var result = await applicationContext.ScheduledInterviews.FirstOrDefaultAsync(si=>si.scheduledInterviewId==id);
+        return result;
+    }
+
+
+
+
+
+
     public async Task<InterviewType> GetInterviewTypeById(int interviewTypeId)
     {
         var result = await applicationContext.InterviewTypes.FindAsync(interviewTypeId);
@@ -133,5 +149,8 @@ public class ScheduleInterviewService : IScheduleInterviewRepository
         return roundHandlerList;
     }
 
-    
+    public async Task<ScheduledInterview> GetUnclearedInterviewByJobCandidateId(int jobCandidateId)
+    {
+        return await applicationContext.ScheduledInterviews.FirstOrDefaultAsync(si=>si.jobCandidateId == jobCandidateId && !si.isCleared);
+    }
 }

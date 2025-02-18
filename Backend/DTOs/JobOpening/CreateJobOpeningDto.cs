@@ -41,6 +41,7 @@ public class CreateJobOpeningDto
     [Required]
     public int jobStatusId{get;set;}
     
+    
     [Required]
     public List<CreateJobSkillDto> jobSkills{get; set;} = new List<CreateJobSkillDto>();
 

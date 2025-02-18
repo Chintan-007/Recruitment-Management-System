@@ -29,12 +29,26 @@ public class CandidateController : ControllerBase
 
 //====================================================Create===================================================
     [Authorize(Roles ="Candidate")]
-    [HttpPost("upload-docs")]
+    [HttpPost("candidate-documents/upload")]
     public async Task<ActionResult<AddedCandidateDocsDto>> AddCandidateDocs(NewCandidateDocsDto newCandidateDocsDto){
         try{
             if(!ModelState.IsValid){
                 return BadRequest();
             }
+
+            var candidateId = User.FindFirst("id")?.Value;
+            if(candidateId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Candidate id not found in the token.");
+            }
+
+            //Checking If the document is already uploaded
+            foreach(var docData in newCandidateDocsDto.documentDatas){
+                var existiondDoc = await candidateDocsRepository.GetCandidateDocByCandidateIdandDocId(candidateId,docData.documentTypeId);
+                if(existiondDoc != null){
+                    return StatusCode(StatusCodes.Status208AlreadyReported,$"The document having id ${docData.documentTypeId} has already been submitted.");
+                }
+            }
+
             var updatedCandidate = await candidateDocsRepository.AddCandidateDocs(newCandidateDocsDto);
            
            //Getting document dtails for dto
@@ -44,6 +58,7 @@ public class CandidateController : ControllerBase
                 if(doctype == null){
                     throw new Exception("Document type not found");
                 }
+                
                 documentDetlails.Add(new DisplayDocs{
                     documentName = doctype.documentType,
                     link = candidateDoc.documentLink
@@ -74,6 +89,15 @@ public class CandidateController : ControllerBase
                 return NotFound($"Job opening with id: {jobOpeningId} not found");
             }
 
+            if(!String.Equals(jobOpening.jobStatus.status,"Open")){
+                return BadRequest("This job is not open");
+            }
+
+            var existiondDoc = await candidateDocsRepository.GetCandidateDocsByCandidateId(candidateId);
+                if(existiondDoc == null || !existiondDoc.Any()){
+                    return StatusCode(StatusCodes.Status401Unauthorized,"You haven't uploaded any documents");
+                }
+
             if(await jobCandidateRepository.GetJobCandidateByjobOpeningIdAndcanidateId(jobOpeningId,candidateId) != null){
                 return StatusCode(StatusCodes.Status208AlreadyReported,"Already applied for this job");
             }
@@ -87,6 +111,55 @@ public class CandidateController : ControllerBase
         }
     }
 
+
+    [Authorize(Roles ="Candidate")]
+    [HttpPost("selected-candidate-documents/upload")]
+    public async Task<ActionResult<AddedCandidateDocsDto>> AddSelectedCandidateDocs(NewCandidateDocsDto newCandidateDocsDto){
+        try{
+            if(!ModelState.IsValid){
+                return BadRequest();
+            }
+
+            var candidateId = User.FindFirst("id")?.Value;
+            if(candidateId == null){
+                return StatusCode(StatusCodes.Status401Unauthorized,"Candidate id not found in the token.");
+            }
+
+            var selectedJobCandidate = await jobCandidateRepository.GetSelectedJobCandidateByCandidateId(candidateId);
+            if(selectedJobCandidate == null){
+                return StatusCode(StatusCodes.Status405MethodNotAllowed,"You can not upload document without getting selected for any job..!");  
+            }
+
+            //Checking If the document is already uploaded
+            foreach(var docData in newCandidateDocsDto.documentDatas){
+                var existiondDoc = await candidateDocsRepository.GetCandidateDocByCandidateIdandDocId(candidateId,docData.documentTypeId);
+                if(existiondDoc != null){
+                    return StatusCode(StatusCodes.Status208AlreadyReported,$"The document having id ${docData.documentTypeId} has already been submitted.");
+                }
+            }
+
+            var updatedCandidate = await candidateDocsRepository.AddCandidateDocs(newCandidateDocsDto);
+           
+           //Getting document dtails for dto
+            List<DisplayDocs> documentDetlails = new List<DisplayDocs>(); 
+            foreach(var candidateDoc in updatedCandidate.candidateDocs){
+                var doctype = await documentTypeRepository.GetDocumentTypeById(candidateDoc.documentTypeId);
+                if(doctype == null){
+                    throw new Exception("Document type not found");
+                }
+                
+                documentDetlails.Add(new DisplayDocs{
+                    documentName = doctype.documentType,
+                    link = candidateDoc.documentLink
+                });
+            }
+            updatedCandidate.AddedDocsModelToDto(documentDetlails);
+            return Ok();
+        }
+        catch(Exception e){
+            return StatusCode(StatusCodes.Status500InternalServerError,e);
+        }
+    }
 //============================================Read=========================================================
 
 // See all the job openings
